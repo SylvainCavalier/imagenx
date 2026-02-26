@@ -49,6 +49,7 @@ gem "paper_trail", "~> 16.0" # Version control for models
 gem "pagy", "~> 43.0" # Light Pagination
 gem "pg_search" # Full-text search for models
 gem "image_processing", "~> 1.2" # Image processing for Active Storage
+gem "aws-sdk-s3", require: false # S3-compatible storage (OVH)
 
 # Security / Auth / Authorization
 gem "devise" # Auth users

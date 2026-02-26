@@ -1,11 +1,21 @@
 Rails.application.routes.draw do
+  devise_for :users, skip: :all
 
-root to: 'spa#index'
+  root to: 'spa#index'
 
-  # Simple API test endpoint used by the dashboard demo
   namespace :api do
-    get 'test', to: 'test#index'
+    resource :auth, only: [], controller: 'auth' do
+      get :verify
+      post :login
+      delete :logout
+      post :register
+    end
+    resources :generation_batches, only: [:index, :create, :show]
+    resources :image_folders, only: [:index, :show, :create, :update, :destroy] do
+      resources :saved_images, only: [:create, :destroy]
+    end
+    resources :prompt_presets, only: [:index, :create, :update, :destroy]
   end
 
-get '*path', to: 'spa#index', constraints: ->(req) { !req.xhr? && req.format.html? }
+  get '*path', to: 'spa#index', constraints: ->(req) { !req.xhr? && req.format.html? }
 end

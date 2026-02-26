@@ -1,8 +1,6 @@
 # Good Job configuration
 Rails.application.configure do
-  # Use Good Job for Active Job in all environments (disabled in boilerplate until DB is set up)
-  # Uncomment the line below when you have set up your database
-  # config.active_job.queue_adapter = :good_job
+  config.active_job.queue_adapter = :good_job
 
   # Configure Good Job to use PostgreSQL for job storage
   # Jobs will be stored in the same database as your application

@@ -1,9 +1,28 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# Compte de test
+user = User.find_or_create_by!(email: "test@imagenx.com") do |u|
+  u.password = "password"
+  u.password_confirmation = "password"
+end
+
+puts "Test user created: test@imagenx.com / password"
+
+# Quelques presets de prompt
+presets = [
+  { name: "Cinematic",
+    prompt_text: "Cinematic photography, dramatic lighting, shallow depth of field, 8k, ultra detailed", aspect_ratio: "16:9" },
+  { name: "Anime", prompt_text: "Anime style illustration, vibrant colors, detailed linework, studio ghibli inspired",
+    aspect_ratio: "3:4" },
+  { name: "Pixel Art", prompt_text: "Pixel art style, retro 16-bit aesthetic, clean pixels, vibrant palette",
+    aspect_ratio: "1:1" },
+  { name: "Oil Painting",
+    prompt_text: "Classical oil painting style, rich textures, renaissance lighting, museum quality", aspect_ratio: "4:3" }
+]
+
+presets.each do |attrs|
+  user.prompt_presets.find_or_create_by!(name: attrs[:name]) do |p|
+    p.prompt_text = attrs[:prompt_text]
+    p.aspect_ratio = attrs[:aspect_ratio]
+  end
+end
+
+puts "#{presets.size} prompt presets created"
