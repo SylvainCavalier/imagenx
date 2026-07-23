@@ -7,7 +7,8 @@ class GenerateImageJob < ApplicationJob
 
     item.update!(status: 'processing')
 
-    full_prompt = [batch.main_prompt, item.prompt].reject(&:blank?).join(', ')
+    style_parts = (batch.style_options || {}).values.reject(&:blank?)
+    full_prompt = [*style_parts, batch.main_prompt, item.prompt].reject(&:blank?).join(', ')
     generator = ImageGenerator.new
     image_url = generator.generate(prompt: full_prompt, aspect_ratio: batch.aspect_ratio.presence || '1:1')
 

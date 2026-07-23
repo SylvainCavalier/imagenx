@@ -35,13 +35,14 @@ export const useGenerationStore = defineStore('generation', {
       }
     },
 
-    async createBatch({ mainPrompt, aspectRatio, items }) {
+    async createBatch({ mainPrompt, aspectRatio, styleOptions, items }) {
       this.loading = true
       this.error = null
       try {
         const response = await apiClient.post('/generation_batches', {
           main_prompt: mainPrompt,
           aspect_ratio: aspectRatio,
+          style_options: styleOptions || {},
           items: items.map(i => ({ prompt: i.prompt }))
         })
         this.currentBatch = response.data

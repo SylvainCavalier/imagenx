@@ -46,18 +46,72 @@
         placeholder="e.g. Cinematic photography, dramatic lighting, 8k, ultra detailed..."
         class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
       />
-      <div class="mt-3 flex items-center space-x-3">
-        <label class="text-sm text-gray-400">Aspect ratio</label>
-        <select
-          v-model="aspectRatio"
-          class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        >
-          <option value="1:1">1:1 (Square)</option>
-          <option value="16:9">16:9 (Landscape)</option>
-          <option value="9:16">9:16 (Portrait)</option>
-          <option value="4:3">4:3</option>
-          <option value="3:4">3:4</option>
-        </select>
+      <div class="mt-3 flex flex-wrap items-center gap-3">
+        <div class="flex items-center space-x-2">
+          <label class="text-sm text-gray-400">Aspect ratio</label>
+          <select
+            v-model="aspectRatio"
+            class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="1:1">1:1 (Square)</option>
+            <option value="16:9">16:9 (Landscape)</option>
+            <option value="9:16">9:16 (Portrait)</option>
+            <option value="4:3">4:3</option>
+            <option value="3:4">3:4</option>
+          </select>
+        </div>
+        <div class="flex items-center space-x-2">
+          <label class="text-sm text-gray-400">Type</label>
+          <select v-model="imageType" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">None</option>
+            <option value="Photography">Photography</option>
+            <option value="Illustration">Illustration</option>
+            <option value="3D Render">3D Render</option>
+            <option value="Digital Art">Digital Art</option>
+            <option value="Oil Painting">Oil Painting</option>
+            <option value="Watercolor">Watercolor</option>
+            <option value="Pencil Sketch">Pencil Sketch</option>
+            <option value="Pixel Art">Pixel Art</option>
+          </select>
+        </div>
+        <div class="flex items-center space-x-2">
+          <label class="text-sm text-gray-400">Realism</label>
+          <select v-model="realism" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">None</option>
+            <option value="Photorealistic">Photorealistic</option>
+            <option value="Hyperrealistic">Hyperrealistic</option>
+            <option value="Stylized">Stylized</option>
+            <option value="Abstract">Abstract</option>
+            <option value="Cartoon">Cartoon</option>
+          </select>
+        </div>
+        <div class="flex items-center space-x-2">
+          <label class="text-sm text-gray-400">Lighting</label>
+          <select v-model="lighting" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">None</option>
+            <option value="Natural light">Natural light</option>
+            <option value="Studio lighting">Studio lighting</option>
+            <option value="Dramatic lighting">Dramatic lighting</option>
+            <option value="Golden hour">Golden hour</option>
+            <option value="Neon glow">Neon glow</option>
+            <option value="Soft diffused">Soft diffused</option>
+            <option value="Backlit">Backlit</option>
+            <option value="Low-key">Low-key</option>
+          </select>
+        </div>
+        <div class="flex items-center space-x-2">
+          <label class="text-sm text-gray-400">Mood</label>
+          <select v-model="mood" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">None</option>
+            <option value="Cinematic">Cinematic</option>
+            <option value="Dreamy">Dreamy</option>
+            <option value="Dark & moody">Dark & moody</option>
+            <option value="Vibrant">Vibrant</option>
+            <option value="Minimalist">Minimalist</option>
+            <option value="Vintage">Vintage</option>
+            <option value="Futuristic">Futuristic</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -142,6 +196,14 @@
           <span :class="statusClass" class="text-xs font-medium px-2.5 py-1 rounded-full">
             {{ generationStore.currentBatch.status }}
           </span>
+          <button
+            v-if="completedItems.length > 0"
+            @click="downloadSelected"
+            :disabled="selectedItems.length === 0 || downloading"
+            class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm transition-colors"
+          >
+            {{ downloading ? 'Downloading...' : `Download ${selectedItems.length > 0 ? selectedItems.length : ''} selected` }}
+          </button>
           <button
             v-if="completedItems.length > 0"
             @click="saveSelected"
@@ -263,6 +325,10 @@ const presetsStore = usePresetsStore()
 
 const mainPrompt = ref('')
 const aspectRatio = ref('1:1')
+const imageType = ref('')
+const realism = ref('')
+const lighting = ref('')
+const mood = ref('')
 const subPrompts = ref([{ prompt: '' }])
 const selectedIds = ref(new Set())
 
@@ -274,6 +340,16 @@ const presetName = ref('')
 // Save modal
 const showSaveModal = ref(false)
 const newFolderName = ref('')
+const downloading = ref(false)
+
+const styleOptions = computed(() => {
+  const opts = {}
+  if (imageType.value) opts.image_type = imageType.value
+  if (realism.value) opts.realism = realism.value
+  if (lighting.value) opts.lighting = lighting.value
+  if (mood.value) opts.mood = mood.value
+  return opts
+})
 
 const validCount = computed(() => subPrompts.value.filter(s => s.prompt.trim()).length)
 
@@ -329,6 +405,7 @@ const generateAll = async () => {
   const batch = await generationStore.createBatch({
     mainPrompt: mainPrompt.value,
     aspectRatio: aspectRatio.value,
+    styleOptions: styleOptions.value,
     items: validItems
   })
 
@@ -348,6 +425,17 @@ const toggleSelect = (id) => {
     next.add(id)
   }
   selectedIds.value = next
+}
+
+// Download
+const downloadSelected = () => {
+  if (selectedItems.value.length === 0) return
+  const batchId = generationStore.currentBatch?.id
+  if (!batchId) return
+  for (const item of selectedItems.value) {
+    const url = `/api/generation_batches/${batchId}/generation_items/${item.id}/download`
+    window.open(url, '_blank')
+  }
 }
 
 // Save
@@ -381,6 +469,11 @@ const loadPreset = () => {
   if (preset) {
     mainPrompt.value = preset.prompt_text
     if (preset.aspect_ratio) aspectRatio.value = preset.aspect_ratio
+    const opts = preset.style_options || {}
+    imageType.value = opts.image_type || ''
+    realism.value = opts.realism || ''
+    lighting.value = opts.lighting || ''
+    mood.value = opts.mood || ''
   }
 }
 
@@ -389,7 +482,8 @@ const savePreset = async () => {
   await presetsStore.createPreset({
     name: presetName.value,
     promptText: mainPrompt.value,
-    aspectRatio: aspectRatio.value
+    aspectRatio: aspectRatio.value,
+    styleOptions: styleOptions.value
   })
   presetName.value = ''
   showSavePreset.value = false

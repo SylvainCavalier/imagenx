@@ -29,4 +29,9 @@ export default [
     component: () => import('../pages/MyImages.vue'),
     meta: { requiresAuth: true }
   },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../pages/NotFound.vue'),
+  },
 ]

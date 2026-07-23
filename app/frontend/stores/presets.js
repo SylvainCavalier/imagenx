@@ -21,12 +21,13 @@ export const usePresetsStore = defineStore('presets', {
       }
     },
 
-    async createPreset({ name, promptText, aspectRatio }) {
+    async createPreset({ name, promptText, aspectRatio, styleOptions }) {
       try {
         const response = await apiClient.post('/prompt_presets', {
           name,
           prompt_text: promptText,
-          aspect_ratio: aspectRatio
+          aspect_ratio: aspectRatio,
+          style_options: styleOptions || {}
         })
         this.presets.push(response.data)
         this.presets.sort((a, b) => a.name.localeCompare(b.name))
@@ -37,12 +38,13 @@ export const usePresetsStore = defineStore('presets', {
       }
     },
 
-    async updatePreset(id, { name, promptText, aspectRatio }) {
+    async updatePreset(id, { name, promptText, aspectRatio, styleOptions }) {
       try {
         const response = await apiClient.patch(`/prompt_presets/${id}`, {
           name,
           prompt_text: promptText,
-          aspect_ratio: aspectRatio
+          aspect_ratio: aspectRatio,
+          style_options: styleOptions || {}
         })
         const idx = this.presets.findIndex(p => p.id === id)
         if (idx !== -1) this.presets[idx] = response.data

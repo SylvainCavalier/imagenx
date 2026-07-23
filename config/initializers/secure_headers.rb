@@ -24,7 +24,7 @@ SecureHeaders::Configuration.default do |config|
     
     # Development-specific rules for Vite
     upgrade_insecure_requests: Rails.env.production?, # Only force HTTPS in production
-    report_uri: %w(/csp-violation-report-endpoint)
+    report_uri: Rails.env.production? ? %w(/csp-violation-report-endpoint) : nil
   }
 
   # Add Vite development server support

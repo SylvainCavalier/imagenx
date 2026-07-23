@@ -54,6 +54,28 @@ bundle exec brakeman        # Static security analysis
 bundle exec bundler-audit  # Gem vulnerability check
 ```
 
+## Product Overview (What This App Does)
+
+ImageNX is an AI image generation SaaS. Users write text prompts, generate images via an external AI provider, and organize the results into a personal library.
+
+### Core features
+
+- **Auth**: email/password via Devise, session-based (`Api::AuthController` — login/register/logout/verify). No email confirmation or password reset flow wired up yet.
+  - **Programmatic access**: `/api/*` also accepts `Authorization: Bearer <token>` (`User#api_token`, `has_secure_token`), for scripts/agents that can't hold a session cookie/CSRF token. CSRF is skipped only when a Bearer token is present (`Api::BaseController#api_token_request?`); the cookie+CSRF flow used by the SPA is untouched. Manage the token with `bin/rails "api_token:show[email]"` / `"api_token:regenerate[email]"` (`lib/tasks/api_token.rake`). Used by the `imagenx-generate` Claude skill (`~/.claude/skills/imagenx-generate/`) to let other local projects trigger image generation.
+- **Image generation** (`Dashboard.vue`): user enters a main prompt (style/mood/format), an aspect ratio, optional style options, and one or more per-image sub-prompts. Submitting creates a `GenerationBatch` with one `GenerationItem` per sub-prompt.
+  - Each `GenerationItem` is processed by `GenerateImageJob` (GoodJob), staggered 12s apart to respect provider rate limits. The full prompt sent to the provider concatenates style options + main prompt + item prompt.
+  - `ImageGenerator` calls the Replicate API (`black-forest-labs/flux-1.1-pro` model): creates a prediction, retries on HTTP 429 (up to 5x), then polls (every 2s, up to 120s) until the prediction succeeds/fails.
+  - Item status flow: `pending` → `processing` → `completed`/`failed`. The batch's own status is derived from its items (`GenerationBatch#update_status!`).
+- **Prompt presets**: users can save/reuse a named preset (prompt text + aspect ratio + style options) to prefill the generation form.
+- **Generation history** (`History.vue`): lists past batches with thumbnails and status; click through to see all items of a batch in a modal.
+- **Personal image library** (`MyImages.vue`): generated images can be saved into `ImageFolder`s. Saving triggers `DownloadImageJob`, which fetches the image from its temporary `source_url` and attaches it permanently via Active Storage (so it survives the provider's URL expiring). Folders support rename/delete; images support rename (prompt) and delete. Both generation items and saved images can be downloaded as PNG.
+
+### Data model
+
+`User` → `GenerationBatch` → `GenerationItem` (one prompt/image generation attempt each)
+`User` → `PromptPreset` (reusable prompt template)
+`User` → `ImageFolder` → `SavedImage` (permanently kept image, Active Storage attachment)
+
 ## Architecture
 
 ### Request Flow

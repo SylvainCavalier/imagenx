@@ -46,7 +46,7 @@ module Api
     private
 
     def batch_params
-      params.permit(:main_prompt, :aspect_ratio)
+      params.permit(:main_prompt, :aspect_ratio, style_options: {})
     end
 
     def batch_json(batch)
@@ -54,6 +54,7 @@ module Api
         id: batch.id,
         main_prompt: batch.main_prompt,
         aspect_ratio: batch.aspect_ratio,
+        style_options: batch.style_options,
         status: batch.status,
         created_at: batch.created_at,
         items: batch.generation_items.ordered.map { |item| item_json(item) }

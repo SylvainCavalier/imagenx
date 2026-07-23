@@ -80,7 +80,16 @@
           <div class="aspect-square relative">
             <img :src="image.url" :alt="image.prompt" class="w-full h-full object-cover" />
             <!-- Actions overlay -->
-            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-start justify-end p-2 opacity-0 group-hover:opacity-100">
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-start justify-end p-2 opacity-0 group-hover:opacity-100 space-x-1.5">
+              <button
+                @click.stop="downloadImage(image)"
+                class="p-1.5 bg-black/50 hover:bg-indigo-600 rounded-lg text-white transition-colors"
+                title="Download image"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
               <button
                 @click.stop="deleteImage(image.id)"
                 class="p-1.5 bg-black/50 hover:bg-red-600 rounded-lg text-white transition-colors"
@@ -93,7 +102,21 @@
             </div>
           </div>
           <div class="p-3">
-            <p class="text-sm text-gray-400 line-clamp-2">{{ image.prompt }}</p>
+            <input
+              v-if="editingImageId === image.id"
+              v-model="editingPrompt"
+              @blur="saveImageName(image)"
+              @keyup.enter="$event.target.blur()"
+              @keyup.escape="cancelEdit"
+              class="w-full text-sm text-white bg-gray-800 border border-indigo-500 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              ref="editInput"
+            />
+            <p
+              v-else
+              @click.stop="startEditImage(image)"
+              class="text-sm text-gray-400 line-clamp-2 cursor-pointer hover:text-gray-200 transition-colors"
+              title="Click to edit"
+            >{{ image.prompt }}</p>
             <p class="text-xs text-gray-600 mt-1">{{ formatDate(image.created_at) }}</p>
           </div>
         </div>
@@ -120,13 +143,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import { useLibraryStore } from '../stores/library'
 
 const libraryStore = useLibraryStore()
 
 const showRenameModal = ref(false)
 const renameName = ref('')
+const editingImageId = ref(null)
+const editingPrompt = ref('')
+const editInput = ref(null)
 
 onMounted(() => {
   libraryStore.currentFolder = null
@@ -157,6 +183,42 @@ const confirmDeleteFolder = async () => {
   if (!libraryStore.currentFolder) return
   if (confirm('Delete this folder and all its images?')) {
     await libraryStore.deleteFolder(libraryStore.currentFolder.id)
+  }
+}
+
+const startEditImage = async (image) => {
+  editingImageId.value = image.id
+  editingPrompt.value = image.prompt
+  await nextTick()
+  editInput.value?.focus()
+}
+
+const saveImageName = async (image) => {
+  const newPrompt = editingPrompt.value.trim()
+  if (newPrompt && newPrompt !== image.prompt && libraryStore.currentFolder) {
+    await libraryStore.renameImage(libraryStore.currentFolder.id, image.id, newPrompt)
+  }
+  editingImageId.value = null
+}
+
+const cancelEdit = () => {
+  editingImageId.value = null
+}
+
+const downloadImage = async (image) => {
+  if (!libraryStore.currentFolder) return
+  const url = `/api/image_folders/${libraryStore.currentFolder.id}/saved_images/${image.id}/download`
+  try {
+    const response = await fetch(url)
+    const blob = await response.blob()
+    const filename = (image.prompt || 'image').slice(0, 50).replace(/[^a-zA-Z0-9-_ ]/g, '').trim() + '.png'
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(a.href)
+  } catch {
+    window.open(url, '_blank')
   }
 }
 

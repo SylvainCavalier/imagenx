@@ -41,7 +41,8 @@ class ImageGenerator
       request.body = {
         input: {
           prompt: prompt,
-          aspect_ratio: aspect_ratio
+          aspect_ratio: aspect_ratio,
+          output_format: 'png'
         }
       }.to_json
 

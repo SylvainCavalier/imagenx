@@ -10,9 +10,19 @@ Rails.application.routes.draw do
       delete :logout
       post :register
     end
-    resources :generation_batches, only: [:index, :create, :show]
+    resources :generation_batches, only: [:index, :create, :show] do
+      resources :generation_items, only: [] do
+        member do
+          get :download
+        end
+      end
+    end
     resources :image_folders, only: [:index, :show, :create, :update, :destroy] do
-      resources :saved_images, only: [:create, :destroy]
+      resources :saved_images, only: [:create, :update, :destroy] do
+        member do
+          get :download
+        end
+      end
     end
     resources :prompt_presets, only: [:index, :create, :update, :destroy]
   end

@@ -85,6 +85,20 @@ export const useLibraryStore = defineStore('library', {
       }
     },
 
+    async renameImage(folderId, imageId, prompt) {
+      try {
+        const response = await apiClient.patch(`/image_folders/${folderId}/saved_images/${imageId}`, { prompt })
+        if (this.currentFolder?.id === folderId) {
+          const img = this.currentFolder.images.find(i => i.id === imageId)
+          if (img) img.prompt = response.data.prompt
+        }
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.error || 'Failed to rename image'
+        return null
+      }
+    },
+
     async deleteImage(folderId, imageId) {
       try {
         await apiClient.delete(`/image_folders/${folderId}/saved_images/${imageId}`)

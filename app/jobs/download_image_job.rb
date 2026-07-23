@@ -8,12 +8,20 @@ class DownloadImageJob < ApplicationJob
     return if saved_image.file.attached?
 
     downloaded = URI.parse(image_url).open
-    filename = "image_#{saved_image.id}_#{Time.current.to_i}.webp"
+    content_type = downloaded.content_type || 'image/png'
+    ext = case content_type
+          when 'image/png' then 'png'
+          when 'image/jpeg' then 'jpg'
+          when 'image/webp' then 'webp'
+          else 'png'
+          end
+    base = (saved_image.prompt.presence || "image_#{saved_image.id}").truncate(50, omission: '').parameterize.presence || "image_#{saved_image.id}"
+    filename = "#{base}.#{ext}"
 
     saved_image.file.attach(
       io: downloaded,
       filename: filename,
-      content_type: downloaded.content_type || 'image/webp'
+      content_type: content_type
     )
   rescue => e
     Rails.logger.error "Failed to download image #{saved_image_id}: #{e.message}"

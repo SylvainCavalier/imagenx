@@ -28,6 +28,33 @@ module Api
       render json: { error: e.message }, status: :unprocessable_entity
     end
 
+    def update
+      folder = current_user.image_folders.find(params[:image_folder_id])
+      image = folder.saved_images.find(params[:id])
+      image.update!(prompt: params[:prompt])
+      render json: { id: image.id, prompt: image.prompt }
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
+
+    def download
+      folder = current_user.image_folders.find(params[:image_folder_id])
+      image = folder.saved_images.find(params[:id])
+
+      unless image.file.attached?
+        return render json: { error: 'Image not yet available' }, status: :not_found
+      end
+
+      filename = (image.prompt.presence || 'image').truncate(50, omission: '').parameterize + '.png'
+
+      if image.file.content_type == 'image/png'
+        redirect_to rails_blob_path(image.file, disposition: :attachment, filename: filename), allow_other_host: true
+      else
+        variant = image.file.variant(format: :png).processed
+        redirect_to rails_representation_path(variant, disposition: :attachment, filename: filename), allow_other_host: true
+      end
+    end
+
     def destroy
       folder = current_user.image_folders.find(params[:image_folder_id])
       image = folder.saved_images.find(params[:id])
