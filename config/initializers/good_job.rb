@@ -21,7 +21,11 @@ Rails.application.configure do
   
   # Set maximum number of threads
   config.good_job.max_threads = ENV.fetch("GOOD_JOB_MAX_THREADS", 5).to_i
-  
+
   # Enable dashboard in development
   config.good_job.enable_listen_notify = Rails.env.development?
+
+  # Single Basic dyno on Heroku: no separate worker process, so jobs run as
+  # in-process threads inside the web dyno instead of GoodJob's default :external mode.
+  config.good_job.execution_mode = :async if Rails.env.production?
 end

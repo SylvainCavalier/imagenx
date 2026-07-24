@@ -1,0 +1,100 @@
+{
+  "name": "ImageNX",
+  "description": "ImageNX - AI image generation SaaS",
+  "repository": "https://github.com/SylvainCavalier/imagenx",
+  "buildpacks": [
+    { "url": "heroku/nodejs" },
+    { "url": "heroku/ruby" }
+  ],
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "env": {
+    "RAILS_MASTER_KEY": {
+      "description": "Contents of config/master.key, required to decrypt config/credentials.yml.enc",
+      "required": true
+    },
+    "APP_HOST": {
+      "description": "Public hostname used for mailer links and Host header allowlist (e.g. app.sbclabs.fr)",
+      "required": true
+    },
+    "RAILS_LOG_LEVEL": {
+      "description": "Rails log level",
+      "value": "info"
+    },
+    "RAILS_MAX_THREADS": {
+      "description": "Puma / DB pool thread count",
+      "value": "5"
+    },
+    "WEB_CONCURRENCY": {
+      "description": "Number of Puma worker processes",
+      "value": "1"
+    },
+    "GOOD_JOB_MAX_THREADS": {
+      "description": "GoodJob in-process thread pool size (async execution mode)",
+      "value": "5"
+    },
+    "MAILER_FROM": {
+      "description": "From address used by Devise mailers",
+      "required": true
+    },
+    "SUPPORT_EMAIL": {
+      "description": "Support contact address shown in the app",
+      "required": true
+    },
+    "SMTP_HOST": {
+      "description": "Sweego SMTP relay host",
+      "required": true
+    },
+    "SMTP_PORT": {
+      "description": "Sweego SMTP relay port",
+      "value": "587"
+    },
+    "SMTP_USERNAME": {
+      "description": "Sweego SMTP username",
+      "required": true
+    },
+    "SMTP_PASSWORD": {
+      "description": "Sweego SMTP password",
+      "required": true
+    },
+    "REPLICATE_API_KEY": {
+      "description": "Replicate API key used by ImageGenerator (flux-1.1-pro)",
+      "required": true
+    },
+    "S3_ACCESS_KEY": {
+      "description": "OVH Object Storage (S3-compatible) access key",
+      "required": true
+    },
+    "S3_SECRET_KEY": {
+      "description": "OVH Object Storage secret key",
+      "required": true
+    },
+    "S3_REGION": {
+      "description": "OVH Object Storage region",
+      "value": "gra"
+    },
+    "S3_BUCKET_NAME": {
+      "description": "OVH Object Storage bucket name",
+      "required": true
+    },
+    "S3_ENDPOINT": {
+      "description": "OVH Object Storage S3-compatible endpoint URL",
+      "required": true
+    },
+    "STRIPE_SECRET_KEY": {
+      "description": "Stripe live secret key",
+      "required": true
+    },
+    "STRIPE_WEBHOOK_SECRET": {
+      "description": "Stripe live webhook signing secret (from `stripe --project-name imagenx webhook_endpoints create`)",
+      "required": true
+    }
+  }
+}

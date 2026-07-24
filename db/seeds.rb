@@ -1,3 +1,5 @@
+raise "Refusing to run demo seeds (hardcoded passwords) in production" if Rails.env.production?
+
 # Compte de test
 user = User.find_or_create_by!(email: "test@imagenx.com") do |u|
   u.password = "password"
