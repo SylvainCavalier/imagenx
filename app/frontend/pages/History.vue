@@ -1,12 +1,12 @@
 <template>
   <div class="max-w-5xl mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold text-white mb-6">Generation History</h1>
+    <h1 class="text-2xl font-bold text-white mb-6">{{ t('history.title') }}</h1>
 
-    <div v-if="generationStore.loading" class="text-gray-400 text-center py-12">Loading...</div>
+    <div v-if="generationStore.loading" class="text-gray-400 text-center py-12">{{ t('common.loading') }}</div>
 
     <div v-else-if="!generationStore.batches.length" class="text-center py-12">
-      <p class="text-gray-500">No generations yet.</p>
-      <router-link to="/" class="text-indigo-400 hover:text-indigo-300 text-sm mt-2 inline-block">Create your first batch</router-link>
+      <p class="text-gray-500">{{ t('history.empty') }}</p>
+      <router-link to="/" class="text-indigo-400 hover:text-indigo-300 text-sm mt-2 inline-block">{{ t('history.createFirst') }}</router-link>
     </div>
 
     <div v-else class="space-y-4">
@@ -19,10 +19,10 @@
         <div class="flex items-center justify-between mb-3">
           <div>
             <p class="text-white font-medium line-clamp-1">{{ batch.main_prompt }}</p>
-            <p class="text-xs text-gray-500 mt-1">{{ formatDate(batch.created_at) }} &middot; {{ batch.items.length }} images &middot; {{ batch.aspect_ratio }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ formatDate(batch.created_at) }} &middot; {{ t('history.imagesCount', { count: batch.items.length }) }} &middot; {{ batch.aspect_ratio }}</p>
           </div>
           <span :class="statusClass(batch.status)" class="text-xs font-medium px-2.5 py-1 rounded-full shrink-0">
-            {{ batch.status }}
+            {{ t(`common.status.${batch.status}`) }}
           </span>
         </div>
 
@@ -59,7 +59,7 @@
             <div class="aspect-square bg-gray-800">
               <img v-if="item.image_url" :src="item.image_url" :alt="item.prompt" class="w-full h-full object-cover" />
               <div v-else class="w-full h-full flex items-center justify-center text-gray-600 text-sm">
-                {{ item.status === 'failed' ? 'Failed' : 'No image' }}
+                {{ item.status === 'failed' ? t('dashboard.failed') : t('history.noImage') }}
               </div>
             </div>
             <div class="p-3">
@@ -74,9 +74,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useGenerationStore } from '../stores/generation'
 
 const generationStore = useGenerationStore()
+const { t, locale } = useI18n()
 const selectedBatch = ref(null)
 
 onMounted(() => {
@@ -98,7 +100,7 @@ const statusClass = (status) => {
 }
 
 const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString(locale.value === 'fr' ? 'fr-FR' : 'en-US', {
     month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
   })
 }

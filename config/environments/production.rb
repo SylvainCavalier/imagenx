@@ -87,6 +87,22 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
+  # Sweego SMTP relay. SMTP_* vars default to nil (not a raising .fetch) so boot never
+  # crashes before they're set in .env — failures only surface when an email actually sends.
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: ENV.fetch("SMTP_HOST", nil),
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
+    user_name: ENV.fetch("SMTP_USERNAME", nil),
+    password: ENV.fetch("SMTP_PASSWORD", nil),
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
+  config.action_mailer.perform_deliveries = true
+  # TODO: APP_HOST must be set to the real production domain before deploy, otherwise
+  # confirmation/reset-password links will point at localhost.
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "localhost"), protocol: "https" }
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false

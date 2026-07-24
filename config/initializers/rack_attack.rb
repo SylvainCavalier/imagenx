@@ -6,38 +6,38 @@ class Rack::Attack
     Rails.env.development? && ['127.0.0.1', '::1'].include?(req.ip)
   end
 
-  # Throttle login attempts by IP address
-  # Compatible with Devise default routes
+  # Throttle login attempts by IP address (real endpoint — devise_for :users, skip: :all
+  # means the classic /users/sign_in route doesn't exist here, auth lives under /api/auth)
   Rack::Attack.throttle('login attempts by ip', limit: 5, period: 60.seconds) do |req|
-    if (req.path == '/users/sign_in' || req.path.match(%r{^/users/sign_in})) && req.post?
-      req.ip
-    end
+    req.ip if req.path == '/api/auth/login' && req.post?
   end
 
   # Throttle login attempts by email address
-  # Handle both Devise and custom authentication forms
   Rack::Attack.throttle('login attempts by email', limit: 5, period: 60.seconds) do |req|
-    if (req.path == '/users/sign_in' || req.path.match(%r{^/users/sign_in})) && req.post?
-      # Try different possible parameter structures
-      email = req.params.dig('user', 'email') || 
-              req.params.dig('email') ||
-              req.params.dig('session', 'email')
-      email&.downcase if email
+    if req.path == '/api/auth/login' && req.post?
+      req.params['email']&.downcase
     end
   end
 
-  # Throttle password reset attempts
-  Rack::Attack.throttle('password reset attempts', limit: 3, period: 60.seconds) do |req|
-    if (req.path == '/users/password' || req.path.match(%r{^/users/password})) && req.post?
-      req.ip
+  # Throttle registration attempts by IP
+  Rack::Attack.throttle('registration attempts by ip', limit: 3, period: 60.seconds) do |req|
+    req.ip if req.path == '/api/auth/register' && req.post?
+  end
+
+  # Throttle password reset requests
+  Rack::Attack.throttle('password reset attempts by ip', limit: 3, period: 60.seconds) do |req|
+    req.ip if req.path == '/api/auth/forgot_password' && req.post?
+  end
+
+  Rack::Attack.throttle('password reset attempts by email', limit: 3, period: 60.seconds) do |req|
+    if req.path == '/api/auth/forgot_password' && req.post?
+      req.params['email']&.downcase
     end
   end
-  
-  # Throttle registration attempts
-  Rack::Attack.throttle('registration attempts', limit: 3, period: 60.seconds) do |req|
-    if (req.path == '/users' || req.path == '/users/sign_up' || req.path.match(%r{^/users/sign_up})) && req.post?
-      req.ip
-    end
+
+  # Throttle confirmation email resends
+  Rack::Attack.throttle('resend confirmation attempts by ip', limit: 3, period: 60.seconds) do |req|
+    req.ip if req.path == '/api/auth/resend_confirmation' && req.post?
   end
 
   # Throttle API requests

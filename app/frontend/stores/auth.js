@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', {
       } catch (error) {
         const message = error.response?.data?.error || 'Login failed'
         this.error = message
-        return { success: false, error: message }
+        return { success: false, error: message, unconfirmed: !!error.response?.data?.unconfirmed }
       } finally {
         this.loading = false
       }
@@ -62,10 +62,70 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       try {
         const response = await apiClient.post('/auth/register', userData)
-        this.setUser(response.data.user)
-        return { success: true }
+        // No session is created here: the backend requires email confirmation
+        // before granting access, so we don't setUser — the caller shows a
+        // "check your email" state instead of redirecting into the app.
+        return { success: true, email: response.data.email, message: response.data.message }
       } catch (error) {
         const message = error.response?.data?.error || 'Registration failed'
+        this.error = message
+        return { success: false, error: message }
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async forgotPassword(email) {
+      this.loading = true
+      this.error = null
+      try {
+        const response = await apiClient.post('/auth/forgot_password', { email })
+        return { success: true, message: response.data.message }
+      } catch (error) {
+        const message = error.response?.data?.error || 'Request failed'
+        this.error = message
+        return { success: false, error: message }
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async resetPassword(token, password, passwordConfirmation) {
+      this.loading = true
+      this.error = null
+      try {
+        await apiClient.post('/auth/reset_password', {
+          reset_password_token: token,
+          password,
+          password_confirmation: passwordConfirmation
+        })
+        return { success: true }
+      } catch (error) {
+        const message = error.response?.data?.error || 'Reset failed'
+        this.error = message
+        return { success: false, error: message }
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async resendConfirmation(email) {
+      try {
+        await apiClient.post('/auth/resend_confirmation', { email })
+        return { success: true }
+      } catch {
+        return { success: false }
+      }
+    },
+
+    async confirmEmail(token) {
+      this.loading = true
+      this.error = null
+      try {
+        const response = await apiClient.get('/auth/confirm', { params: { confirmation_token: token } })
+        return { success: true, message: response.data.message }
+      } catch (error) {
+        const message = error.response?.data?.error || 'Confirmation failed'
         this.error = message
         return { success: false, error: message }
       } finally {

@@ -1,0 +1,13 @@
+<% confirm_url = "#{root_url}confirm-email?confirmation_token=#{@token}" %>
+<h1 style="color:#0f1115;font-family:sans-serif;">Bienvenue sur ImageNX</h1>
+<p style="color:#333;font-family:sans-serif;">
+  Confirmez votre adresse email pour activer votre compte et vos <%= User::TRIAL_CREDITS %> crédits d'essai offerts.
+</p>
+<p>
+  <a href="<%= confirm_url %>" style="background:#4f46e5;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-family:sans-serif;display:inline-block;">
+    Confirmer mon compte
+  </a>
+</p>
+<p style="color:#6b7280;font-size:12px;font-family:sans-serif;">
+  Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur : <%= confirm_url %>
+</p>

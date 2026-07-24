@@ -13,28 +13,28 @@
           </svg>
         </button>
         <h1 class="text-2xl font-bold text-white">
-          {{ libraryStore.currentFolder ? libraryStore.currentFolder.name : 'My Images' }}
+          {{ libraryStore.currentFolder ? libraryStore.currentFolder.name : t('myImages.title') }}
         </h1>
       </div>
 
       <!-- Rename / Delete folder -->
       <div v-if="libraryStore.currentFolder" class="flex items-center space-x-2">
         <button @click="startRename" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 rounded-lg text-sm transition-colors">
-          Rename
+          {{ t('myImages.rename') }}
         </button>
         <button @click="confirmDeleteFolder" class="px-3 py-1.5 text-gray-500 hover:text-red-400 transition-colors text-sm">
-          Delete folder
+          {{ t('myImages.deleteFolder') }}
         </button>
       </div>
     </div>
 
-    <div v-if="libraryStore.loading" class="text-gray-400 text-center py-12">Loading...</div>
+    <div v-if="libraryStore.loading" class="text-gray-400 text-center py-12">{{ t('common.loading') }}</div>
 
     <!-- Folders view -->
     <div v-else-if="!libraryStore.currentFolder">
       <div v-if="!libraryStore.folders.length" class="text-center py-12">
-        <p class="text-gray-500">No saved images yet.</p>
-        <router-link to="/" class="text-indigo-400 hover:text-indigo-300 text-sm mt-2 inline-block">Generate some images first</router-link>
+        <p class="text-gray-500">{{ t('myImages.empty') }}</p>
+        <router-link to="/" class="text-indigo-400 hover:text-indigo-300 text-sm mt-2 inline-block">{{ t('myImages.generateFirst') }}</router-link>
       </div>
 
       <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -59,7 +59,7 @@
           </div>
           <div class="p-3">
             <p class="text-white text-sm font-medium line-clamp-1">{{ folder.name }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">{{ folder.images_count }} image{{ folder.images_count !== 1 ? 's' : '' }}</p>
+            <p class="text-xs text-gray-500 mt-0.5">{{ t('myImages.imagesCount', { count: folder.images_count }) }}</p>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@
     <!-- Folder detail view -->
     <div v-else>
       <div v-if="!libraryStore.currentFolder.images?.length" class="text-center py-12">
-        <p class="text-gray-500">This folder is empty.</p>
+        <p class="text-gray-500">{{ t('myImages.folderEmpty') }}</p>
       </div>
 
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -84,7 +84,7 @@
               <button
                 @click.stop="downloadImage(image)"
                 class="p-1.5 bg-black/50 hover:bg-indigo-600 rounded-lg text-white transition-colors"
-                title="Download image"
+                :title="t('myImages.downloadImage')"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -93,7 +93,7 @@
               <button
                 @click.stop="deleteImage(image.id)"
                 class="p-1.5 bg-black/50 hover:bg-red-600 rounded-lg text-white transition-colors"
-                title="Delete image"
+                :title="t('myImages.deleteImage')"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -115,7 +115,7 @@
               v-else
               @click.stop="startEditImage(image)"
               class="text-sm text-gray-400 line-clamp-2 cursor-pointer hover:text-gray-200 transition-colors"
-              title="Click to edit"
+              :title="t('myImages.clickToEdit')"
             >{{ image.prompt }}</p>
             <p class="text-xs text-gray-600 mt-1">{{ formatDate(image.created_at) }}</p>
           </div>
@@ -126,7 +126,7 @@
     <!-- Rename modal -->
     <div v-if="showRenameModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" @click.self="showRenameModal = false">
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 w-full max-w-sm">
-        <h3 class="text-lg font-semibold text-white mb-4">Rename folder</h3>
+        <h3 class="text-lg font-semibold text-white mb-4">{{ t('myImages.renameFolderTitle') }}</h3>
         <input
           v-model="renameName"
           type="text"
@@ -134,8 +134,8 @@
           @keyup.enter="renameFolder"
         />
         <div class="flex justify-end space-x-3">
-          <button @click="showRenameModal = false" class="px-4 py-2 text-gray-400 hover:text-white text-sm">Cancel</button>
-          <button @click="renameFolder" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm">Rename</button>
+          <button @click="showRenameModal = false" class="px-4 py-2 text-gray-400 hover:text-white text-sm">{{ t('common.cancel') }}</button>
+          <button @click="renameFolder" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm">{{ t('common.rename') }}</button>
         </div>
       </div>
     </div>
@@ -144,9 +144,11 @@
 
 <script setup>
 import { ref, nextTick, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useLibraryStore } from '../stores/library'
 
 const libraryStore = useLibraryStore()
+const { t, locale } = useI18n()
 
 const showRenameModal = ref(false)
 const renameName = ref('')
@@ -181,7 +183,7 @@ const renameFolder = async () => {
 
 const confirmDeleteFolder = async () => {
   if (!libraryStore.currentFolder) return
-  if (confirm('Delete this folder and all its images?')) {
+  if (confirm(t('myImages.confirmDeleteFolder'))) {
     await libraryStore.deleteFolder(libraryStore.currentFolder.id)
   }
 }
@@ -228,7 +230,7 @@ const deleteImage = async (imageId) => {
 }
 
 const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString(locale.value === 'fr' ? 'fr-FR' : 'en-US', {
     month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
   })
 }

@@ -29,9 +29,15 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      const isAuthPage = ['/login', '/register'].includes(window.location.pathname)
-      if (!isAuthPage) {
+    // /auth/* 401s (verify, login, register, ...) are expected, normal responses that
+    // the calling store action already handles inline — never hard-redirect on those,
+    // or every anonymous visit to a public page (checkAuth's own verify call) would
+    // bounce straight to /login.
+    const isAuthEndpoint = error.config?.url?.startsWith('/auth/')
+    if (error.response?.status === 401 && !isAuthEndpoint) {
+      const publicPaths = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/confirm-email']
+      const isPublicPage = publicPaths.includes(window.location.pathname)
+      if (!isPublicPage) {
         window.location.href = '/login'
       }
     }

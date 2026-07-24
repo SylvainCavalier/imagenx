@@ -6,9 +6,14 @@ module Api
     private
 
     def authenticate_user!
+      return render_unconfirmed if current_user && !current_user.confirmed?
       return if current_user
 
       render json: { error: "Not authenticated" }, status: :unauthorized
+    end
+
+    def render_unconfirmed
+      render json: { error: "Please confirm your email address" }, status: :unauthorized
     end
 
     def current_user

@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Imagenx</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= display_meta_tags site: 'ImageNX',
+          title: 'Générez des images IA cohérentes, par lots',
+          description: "Un prompt principal, un sous-prompt par image : générez plusieurs images IA cohérentes en un seul batch, sans effort. Essai gratuit avec crédits offerts.",
+          image: "#{request.base_url}/og-image.png",
+          reverse: true %>
 
     <%= vite_client_tag %>
     <%= vite_javascript_tag 'application' %>

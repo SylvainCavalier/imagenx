@@ -20,7 +20,11 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.guest && authStore.isLoggedIn) {
-    return '/'
+    return '/app'
+  }
+
+  if (to.name === 'Landing' && authStore.isLoggedIn) {
+    return '/app'
   }
 })
 

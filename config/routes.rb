@@ -9,6 +9,10 @@ Rails.application.routes.draw do
       post :login
       delete :logout
       post :register
+      get :confirm
+      post :resend_confirmation
+      post :forgot_password
+      post :reset_password
     end
     resources :generation_batches, only: [:index, :create, :show] do
       resources :generation_items, only: [] do

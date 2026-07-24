@@ -1,11 +1,11 @@
 <template>
   <div class="max-w-5xl mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold text-white mb-6">Generate Images</h1>
+    <h1 class="text-2xl font-bold text-white mb-6">{{ t('dashboard.title') }}</h1>
 
     <!-- Main Prompt -->
     <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
       <div class="flex items-center justify-between mb-2">
-        <label class="block text-sm font-medium text-gray-300">Main prompt (style, mood, format)</label>
+        <label class="block text-sm font-medium text-gray-300">{{ t('dashboard.mainPromptLabel') }}</label>
 
         <!-- Presets -->
         <div class="flex items-center space-x-2">
@@ -14,7 +14,7 @@
             @change="loadPreset"
             class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option :value="null">Load preset...</option>
+            <option :value="null">{{ t('dashboard.loadPreset') }}</option>
             <option v-for="preset in presetsStore.presets" :key="preset.id" :value="preset.id">
               {{ preset.name }}
             </option>
@@ -23,15 +23,15 @@
             @click="showSavePreset = true"
             :disabled="!mainPrompt.trim()"
             class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 rounded-lg text-sm transition-colors disabled:opacity-40"
-            title="Save as preset"
+            :title="t('dashboard.savePreset')"
           >
-            Save
+            {{ t('common.save') }}
           </button>
           <button
             v-if="selectedPresetId"
             @click="deletePreset"
             class="px-2 py-1.5 text-gray-500 hover:text-red-400 transition-colors text-sm"
-            title="Delete preset"
+            :title="t('dashboard.deletePreset')"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -43,73 +43,73 @@
       <textarea
         v-model="mainPrompt"
         rows="3"
-        placeholder="e.g. Cinematic photography, dramatic lighting, 8k, ultra detailed..."
+        :placeholder="t('dashboard.mainPromptPlaceholder')"
         class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
       />
       <div class="mt-3 flex flex-wrap items-center gap-3">
         <div class="flex items-center space-x-2">
-          <label class="text-sm text-gray-400">Aspect ratio</label>
+          <label class="text-sm text-gray-400">{{ t('dashboard.aspectRatio') }}</label>
           <select
             v-model="aspectRatio"
             class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="1:1">1:1 (Square)</option>
-            <option value="16:9">16:9 (Landscape)</option>
-            <option value="9:16">9:16 (Portrait)</option>
+            <option value="1:1">{{ t('dashboard.aspectSquare') }}</option>
+            <option value="16:9">{{ t('dashboard.aspectLandscape') }}</option>
+            <option value="9:16">{{ t('dashboard.aspectPortrait') }}</option>
             <option value="4:3">4:3</option>
             <option value="3:4">3:4</option>
           </select>
         </div>
         <div class="flex items-center space-x-2">
-          <label class="text-sm text-gray-400">Type</label>
+          <label class="text-sm text-gray-400">{{ t('dashboard.type') }}</label>
           <select v-model="imageType" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="">None</option>
-            <option value="Photography">Photography</option>
-            <option value="Illustration">Illustration</option>
-            <option value="3D Render">3D Render</option>
-            <option value="Digital Art">Digital Art</option>
-            <option value="Oil Painting">Oil Painting</option>
-            <option value="Watercolor">Watercolor</option>
-            <option value="Pencil Sketch">Pencil Sketch</option>
-            <option value="Pixel Art">Pixel Art</option>
+            <option value="">{{ t('dashboard.none') }}</option>
+            <option value="Photography">{{ t('dashboard.typePhotography') }}</option>
+            <option value="Illustration">{{ t('dashboard.typeIllustration') }}</option>
+            <option value="3D Render">{{ t('dashboard.type3dRender') }}</option>
+            <option value="Digital Art">{{ t('dashboard.typeDigitalArt') }}</option>
+            <option value="Oil Painting">{{ t('dashboard.typeOilPainting') }}</option>
+            <option value="Watercolor">{{ t('dashboard.typeWatercolor') }}</option>
+            <option value="Pencil Sketch">{{ t('dashboard.typePencilSketch') }}</option>
+            <option value="Pixel Art">{{ t('dashboard.typePixelArt') }}</option>
           </select>
         </div>
         <div class="flex items-center space-x-2">
-          <label class="text-sm text-gray-400">Realism</label>
+          <label class="text-sm text-gray-400">{{ t('dashboard.realism') }}</label>
           <select v-model="realism" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="">None</option>
-            <option value="Photorealistic">Photorealistic</option>
-            <option value="Hyperrealistic">Hyperrealistic</option>
-            <option value="Stylized">Stylized</option>
-            <option value="Abstract">Abstract</option>
-            <option value="Cartoon">Cartoon</option>
+            <option value="">{{ t('dashboard.none') }}</option>
+            <option value="Photorealistic">{{ t('dashboard.realismPhotorealistic') }}</option>
+            <option value="Hyperrealistic">{{ t('dashboard.realismHyperrealistic') }}</option>
+            <option value="Stylized">{{ t('dashboard.realismStylized') }}</option>
+            <option value="Abstract">{{ t('dashboard.realismAbstract') }}</option>
+            <option value="Cartoon">{{ t('dashboard.realismCartoon') }}</option>
           </select>
         </div>
         <div class="flex items-center space-x-2">
-          <label class="text-sm text-gray-400">Lighting</label>
+          <label class="text-sm text-gray-400">{{ t('dashboard.lighting') }}</label>
           <select v-model="lighting" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="">None</option>
-            <option value="Natural light">Natural light</option>
-            <option value="Studio lighting">Studio lighting</option>
-            <option value="Dramatic lighting">Dramatic lighting</option>
-            <option value="Golden hour">Golden hour</option>
-            <option value="Neon glow">Neon glow</option>
-            <option value="Soft diffused">Soft diffused</option>
-            <option value="Backlit">Backlit</option>
-            <option value="Low-key">Low-key</option>
+            <option value="">{{ t('dashboard.none') }}</option>
+            <option value="Natural light">{{ t('dashboard.lightingNatural') }}</option>
+            <option value="Studio lighting">{{ t('dashboard.lightingStudio') }}</option>
+            <option value="Dramatic lighting">{{ t('dashboard.lightingDramatic') }}</option>
+            <option value="Golden hour">{{ t('dashboard.lightingGoldenHour') }}</option>
+            <option value="Neon glow">{{ t('dashboard.lightingNeon') }}</option>
+            <option value="Soft diffused">{{ t('dashboard.lightingSoft') }}</option>
+            <option value="Backlit">{{ t('dashboard.lightingBacklit') }}</option>
+            <option value="Low-key">{{ t('dashboard.lightingLowKey') }}</option>
           </select>
         </div>
         <div class="flex items-center space-x-2">
-          <label class="text-sm text-gray-400">Mood</label>
+          <label class="text-sm text-gray-400">{{ t('dashboard.mood') }}</label>
           <select v-model="mood" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="">None</option>
-            <option value="Cinematic">Cinematic</option>
-            <option value="Dreamy">Dreamy</option>
-            <option value="Dark & moody">Dark & moody</option>
-            <option value="Vibrant">Vibrant</option>
-            <option value="Minimalist">Minimalist</option>
-            <option value="Vintage">Vintage</option>
-            <option value="Futuristic">Futuristic</option>
+            <option value="">{{ t('dashboard.none') }}</option>
+            <option value="Cinematic">{{ t('dashboard.moodCinematic') }}</option>
+            <option value="Dreamy">{{ t('dashboard.moodDreamy') }}</option>
+            <option value="Dark & moody">{{ t('dashboard.moodDarkMoody') }}</option>
+            <option value="Vibrant">{{ t('dashboard.moodVibrant') }}</option>
+            <option value="Minimalist">{{ t('dashboard.moodMinimalist') }}</option>
+            <option value="Vintage">{{ t('dashboard.moodVintage') }}</option>
+            <option value="Futuristic">{{ t('dashboard.moodFuturistic') }}</option>
           </select>
         </div>
       </div>
@@ -118,22 +118,22 @@
     <!-- Save Preset Modal -->
     <div v-if="showSavePreset" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" @click.self="showSavePreset = false">
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 w-full max-w-sm">
-        <h3 class="text-lg font-semibold text-white mb-4">Save Preset</h3>
+        <h3 class="text-lg font-semibold text-white mb-4">{{ t('dashboard.savePresetTitle') }}</h3>
         <input
           v-model="presetName"
           type="text"
-          placeholder="Preset name..."
+          :placeholder="t('dashboard.presetNamePlaceholder')"
           class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4"
           @keyup.enter="savePreset"
         />
         <div class="flex justify-end space-x-3">
-          <button @click="showSavePreset = false" class="px-4 py-2 text-gray-400 hover:text-white text-sm">Cancel</button>
+          <button @click="showSavePreset = false" class="px-4 py-2 text-gray-400 hover:text-white text-sm">{{ t('common.cancel') }}</button>
           <button
             @click="savePreset"
             :disabled="!presetName.trim()"
             class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm"
           >
-            Save
+            {{ t('common.save') }}
           </button>
         </div>
       </div>
@@ -150,13 +150,13 @@
         <textarea
           v-model="item.prompt"
           rows="2"
-          :placeholder="`Image ${index + 1} - Describe this specific image...`"
+          :placeholder="t('dashboard.imagePlaceholder', { n: index + 1 })"
           class="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
         />
         <button
           @click="removeSubPrompt(index)"
           class="mt-2 text-gray-500 hover:text-red-400 transition-colors shrink-0"
-          title="Remove"
+          :title="t('dashboard.remove')"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -171,30 +171,30 @@
         @click="addSubPrompt"
         class="px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 rounded-lg text-sm transition-colors"
       >
-        + Add image
+        {{ t('dashboard.addImage') }}
       </button>
       <button
         @click="generateAll"
         :disabled="!canGenerate || generationStore.loading"
         class="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg text-sm transition-colors"
       >
-        {{ generationStore.loading ? 'Generating...' : `Generate ${validCount} image${validCount > 1 ? 's' : ''}` }}
+        {{ generationStore.loading ? t('dashboard.generating') : t('dashboard.generateMany', { count: validCount }) }}
       </button>
     </div>
 
     <!-- Error -->
     <div v-if="generationStore.error" class="mb-6 p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-300 text-sm">
       {{ generationStore.error }}
-      <button @click="generationStore.clearError()" class="ml-2 underline">Dismiss</button>
+      <button @click="generationStore.clearError()" class="ml-2 underline">{{ t('dashboard.dismiss') }}</button>
     </div>
 
     <!-- Results -->
     <div v-if="generationStore.currentBatch" class="mb-8">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-white">Results</h2>
+        <h2 class="text-lg font-semibold text-white">{{ t('dashboard.results') }}</h2>
         <div class="flex items-center space-x-3">
           <span :class="statusClass" class="text-xs font-medium px-2.5 py-1 rounded-full">
-            {{ generationStore.currentBatch.status }}
+            {{ t(`common.status.${generationStore.currentBatch.status}`) }}
           </span>
           <button
             v-if="completedItems.length > 0"
@@ -202,7 +202,7 @@
             :disabled="selectedItems.length === 0 || downloading"
             class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm transition-colors"
           >
-            {{ downloading ? 'Downloading...' : `Download ${selectedItems.length > 0 ? selectedItems.length : ''} selected` }}
+            {{ downloading ? t('dashboard.downloading') : (selectedItems.length > 0 ? t('dashboard.downloadSelectedCount', { count: selectedItems.length }) : t('dashboard.downloadSelected')) }}
           </button>
           <button
             v-if="completedItems.length > 0"
@@ -210,7 +210,7 @@
             :disabled="selectedItems.length === 0 || libraryStore.saving"
             class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-lg text-sm transition-colors"
           >
-            {{ libraryStore.saving ? 'Saving...' : `Save ${selectedItems.length > 0 ? selectedItems.length : ''} selected` }}
+            {{ libraryStore.saving ? t('dashboard.saving') : (selectedItems.length > 0 ? t('dashboard.saveSelectedCount', { count: selectedItems.length }) : t('dashboard.saveSelected')) }}
           </button>
         </div>
       </div>
@@ -229,7 +229,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span class="text-sm text-gray-400">{{ item.status === 'processing' ? 'Generating...' : 'Queued' }}</span>
+              <span class="text-sm text-gray-400">{{ item.status === 'processing' ? t('dashboard.generating') : t('dashboard.queued') }}</span>
             </div>
           </div>
 
@@ -261,7 +261,7 @@
           <!-- Failed -->
           <div v-else-if="item.status === 'failed'" class="aspect-square flex items-center justify-center bg-gray-800">
             <div class="text-center p-4">
-              <span class="text-red-400 text-sm">Failed</span>
+              <span class="text-red-400 text-sm">{{ t('dashboard.failed') }}</span>
               <p class="text-xs text-gray-500 mt-1">{{ item.error_message }}</p>
             </div>
           </div>
@@ -276,7 +276,7 @@
     <!-- Save to folder modal -->
     <div v-if="showSaveModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" @click.self="showSaveModal = false">
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 w-full max-w-sm">
-        <h3 class="text-lg font-semibold text-white mb-4">Save to folder</h3>
+        <h3 class="text-lg font-semibold text-white mb-4">{{ t('dashboard.saveToFolder') }}</h3>
 
         <!-- Existing folders -->
         <div v-if="libraryStore.folders.length" class="space-y-2 mb-4 max-h-48 overflow-y-auto">
@@ -303,11 +303,11 @@
             @click="createFolderAndSave"
             class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm shrink-0"
           >
-            New folder
+            {{ t('dashboard.newFolder') }}
           </button>
         </div>
 
-        <button @click="showSaveModal = false" class="mt-3 w-full text-center text-sm text-gray-500 hover:text-gray-300">Cancel</button>
+        <button @click="showSaveModal = false" class="mt-3 w-full text-center text-sm text-gray-500 hover:text-gray-300">{{ t('common.cancel') }}</button>
       </div>
     </div>
   </div>
@@ -315,10 +315,12 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useGenerationStore } from '../stores/generation'
 import { useLibraryStore } from '../stores/library'
 import { usePresetsStore } from '../stores/presets'
 
+const { t } = useI18n()
 const generationStore = useGenerationStore()
 const libraryStore = useLibraryStore()
 const presetsStore = usePresetsStore()
@@ -367,7 +369,7 @@ const selectedItems = computed(() => {
 
 const defaultFolderName = computed(() => {
   const prompt = mainPrompt.value || generationStore.currentBatch?.main_prompt || ''
-  return prompt.substring(0, 50) || 'New folder'
+  return prompt.substring(0, 50) || t('dashboard.newFolder')
 })
 
 const statusClass = computed(() => {
