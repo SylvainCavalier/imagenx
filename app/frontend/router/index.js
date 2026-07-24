@@ -19,6 +19,10 @@ router.beforeEach(async (to) => {
     return '/login'
   }
 
+  if (to.meta.requiresAdmin && !authStore.currentUser?.admin) {
+    return '/app'
+  }
+
   if (to.meta.guest && authStore.isLoggedIn) {
     return '/app'
   }

@@ -5,6 +5,8 @@ export default {
     myImages: 'My Images',
     history: 'History',
     account: 'My Account',
+    support: 'Support',
+    admin: 'Admin',
     logout: 'Logout',
     credits: '{count} credit | {count} credits'
   },
@@ -250,5 +252,69 @@ export default {
   },
   notFound: {
     message: 'Page not found'
+  },
+  support: {
+    title: 'Contact support',
+    subtitle: 'Pick a topic, describe your request, we\'ll get back to you quickly.',
+    categoryTechnical: 'Technical support',
+    categoryBilling: 'Billing & Subscription',
+    categoryIdea: 'Suggestion box',
+    subjectLabel: 'Subject',
+    messageLabel: 'Message',
+    submit: 'Send',
+    sending: 'Sending...',
+    submitError: 'Something went wrong, please try again.',
+    successMessage: 'Your message has been sent, we\'ll get back to you shortly.',
+    newTicket: 'Send another message'
+  },
+  admin: {
+    title: 'Administration',
+    tabStats: 'Statistics',
+    tabUsers: 'Users',
+    tabSupport: 'Support',
+    categoryLabels: {
+      technical: 'Technical support',
+      billing: 'Billing & Subscription',
+      idea: 'Suggestion box'
+    },
+    stats: {
+      freeUsers: 'Free users',
+      paidUsers: 'Paid users',
+      totalLogins: 'Total logins',
+      recentLogins: 'Logins (last 7 days)',
+      totalImages: 'Images generated',
+      avgPerBatch: 'Avg images / generation',
+      avgPerUser: 'Avg images / user',
+      avgSavedPerFolder: 'Avg saved images / folder',
+      topActive: 'Most active users'
+    },
+    users: {
+      addButton: 'Add a user',
+      editButton: 'Edit',
+      searchPlaceholder: 'Search by email or name...',
+      email: 'Email',
+      name: 'Name',
+      confirmed: 'Confirmed',
+      confirmedYes: 'Confirmed',
+      confirmedNo: 'Unconfirmed',
+      admin: 'Admin',
+      credits: 'Credits',
+      signIns: 'Logins',
+      subscription: 'Subscription',
+      prevPage: 'Previous',
+      nextPage: 'Next',
+      saveError: 'Something went wrong.'
+    },
+    support: {
+      allStatuses: 'All',
+      notesPlaceholder: 'Internal notes...',
+      empty: 'No tickets yet.'
+    },
+    ticketStatus: {
+      open: 'Open',
+      in_progress: 'In progress',
+      resolved: 'Resolved',
+      closed: 'Closed'
+    }
   }
 }

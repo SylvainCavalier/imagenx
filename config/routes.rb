@@ -33,6 +33,13 @@ Rails.application.routes.draw do
     resources :checkout_sessions, only: [:create]
     resources :portal_sessions, only: [:create]
     resources :credit_transactions, only: [:index]
+    resources :support_tickets, only: [:create]
+
+    namespace :admin do
+      resource :stats, only: [:show], controller: 'stats'
+      resources :users, only: [:index, :create, :update]
+      resources :support_tickets, only: [:index, :update, :destroy]
+    end
   end
 
   post '/webhooks/stripe', to: 'webhooks#stripe'

@@ -6,6 +6,19 @@ end
 
 puts "Test user created: test@imagenx.com / password"
 
+# Compte admin
+admin = User.find_or_create_by!(email: "mail@sylvaincavalier.com") do |u|
+  u.password = "AdminPasswordToChange"
+  u.password_confirmation = "AdminPasswordToChange"
+  u.name = "Sylvain Cavalier"
+  u.admin = true
+  u.skip_confirmation!
+end
+admin.update!(admin: true) unless admin.admin?
+admin.confirm unless admin.confirmed?
+
+puts "Admin user created: mail@sylvaincavalier.com / AdminPasswordToChange"
+
 # Quelques presets de prompt
 presets = [
   { name: "Cinematic",

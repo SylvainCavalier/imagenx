@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_24_153649) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_24_170351) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -209,6 +209,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_24_153649) do
     t.index ["stripe_event_id"], name: "index_stripe_events_on_stripe_event_id", unique: true
   end
 
+  create_table "support_tickets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "subject", null: false
+    t.text "message", null: false
+    t.string "category", null: false
+    t.string "status", default: "open", null: false
+    t.text "admin_notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_support_tickets_on_category"
+    t.index ["status"], name: "index_support_tickets_on_status"
+    t.index ["user_id"], name: "index_support_tickets_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -230,6 +244,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_24_153649) do
     t.string "subscription_plan"
     t.datetime "subscription_current_period_end"
     t.boolean "subscription_cancel_at_period_end", default: false, null: false
+    t.boolean "admin", default: false, null: false
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.index ["admin"], name: "index_users_on_admin"
     t.index ["api_token"], name: "index_users_on_api_token", unique: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -246,4 +267,5 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_24_153649) do
   add_foreign_key "image_folders", "users"
   add_foreign_key "prompt_presets", "users"
   add_foreign_key "saved_images", "image_folders"
+  add_foreign_key "support_tickets", "users"
 end

@@ -58,6 +58,18 @@ export default [
     meta: { requiresAuth: true }
   },
   {
+    path: '/support',
+    name: 'Support',
+    component: () => import('../pages/Support.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: () => import('../pages/Admin/Dashboard.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../pages/NotFound.vue'),

@@ -34,6 +34,21 @@
           >
             {{ t('nav.account') }}
           </router-link>
+          <router-link
+            to="/support"
+            active-class="text-white"
+            class="text-sm text-gray-300 hover:text-white transition-colors"
+          >
+            {{ t('nav.support') }}
+          </router-link>
+          <router-link
+            v-if="authStore.currentUser?.admin"
+            to="/admin"
+            active-class="text-white"
+            class="text-sm text-gray-300 hover:text-white transition-colors"
+          >
+            {{ t('nav.admin') }}
+          </router-link>
         </div>
         <div class="flex items-center space-x-4">
           <div class="flex items-center space-x-1.5">

@@ -96,6 +96,7 @@ module Api
         id: user.id,
         email: user.email,
         name: user.name,
+        admin: user.admin?,
         created_at: user.created_at,
         confirmed: user.confirmed?,
         credits_balance: user.credits_balance,

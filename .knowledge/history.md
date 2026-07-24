@@ -5,6 +5,15 @@ Les nouvelles entrées sont ajoutées par la commande `/historyupdate` en fin de
 
 ---
 
+### 2026-07-25 — Dashboard admin et système de support
+- [feat] Dashboard admin à `/admin`, réservé au compte administrateur (nouvelle colonne `admin` sur `users`, autorisation par simple booléen sans Pundit) : onglets Statistiques, Utilisateurs, Support
+- [feat] Onglet Statistiques : utilisateurs gratuits/payants, connexions totales et récentes, images générées, moyenne d'images par génération/par utilisateur, moyenne d'images sauvegardées par dossier, top utilisateurs actifs
+- [feat] Onglet Utilisateurs : liste paginée (première vraie utilisation de Pagy dans le projet), création manuelle d'un compte, édition des infos de base (nom, email, crédits, flag admin)
+- [feat] Système de tickets de support basique : page client `/support` (3 thèmes — support technique, facturation et abonnement, boîte à idées) et onglet admin de triage (filtre par statut, notes internes, suppression) ; pas d'historique de suivi côté client, formulaire de soumission uniquement
+- [api] Notification email à la création d'un ticket (mailer dédié, `reply_to` = email du client, adresse de destination configurable via `SUPPORT_EMAIL`)
+- [db] Migrations : colonne `admin` sur `users`, colonnes Devise `:trackable` (suivi des connexions), nouvelle table `support_tickets`
+- [chore] Compte admin seedé de façon idempotente (`mail@sylvaincavalier.com` / `AdminPasswordToChange`, à changer)
+
 ### 2026-07-24 — Intégration Stripe : crédits payants et abonnement
 - [feat] Système de recharge de crédits via Stripe Checkout : 4 paliers ponctuels (3€/5€/10€/20€) et abonnement à 5€/mois (600 crédits, bonus incitatif vs recharge ponctuelle) ; gestion de l'abonnement (résiliation, moyen de paiement, factures) déléguée au Stripe Customer Portal
 - [feat] Page "Mon compte" (`/app/account`) : profil (nom, email, mot de passe), solde et recharge de crédits, statut d'abonnement, historique des mouvements de crédits

@@ -1,0 +1,8 @@
+<p><strong>Catégorie :</strong> <%= @category_label %></p>
+<p><strong>Sujet :</strong> <%= @ticket.subject %></p>
+<p><strong>De :</strong> <%= @user.name.presence || @user.email %> (<%= @user.email %>)</p>
+<p><strong>Envoyé le :</strong> <%= @ticket.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+
+<hr>
+
+<%= simple_format(@ticket.message) %>

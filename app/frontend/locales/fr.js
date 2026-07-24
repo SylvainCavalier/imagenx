@@ -5,6 +5,8 @@ export default {
     myImages: 'Mes images',
     history: 'Historique',
     account: 'Mon compte',
+    support: 'Support',
+    admin: 'Admin',
     logout: 'Déconnexion',
     credits: '{count} crédit | {count} crédits'
   },
@@ -250,5 +252,69 @@ export default {
   },
   notFound: {
     message: 'Page non trouvée'
+  },
+  support: {
+    title: 'Contacter le support',
+    subtitle: 'Choisissez un sujet, décrivez votre demande, nous vous répondrons rapidement.',
+    categoryTechnical: 'Support technique',
+    categoryBilling: 'Facturation et Abonnement',
+    categoryIdea: 'Boîte à idées',
+    subjectLabel: 'Objet',
+    messageLabel: 'Message',
+    submit: 'Envoyer',
+    sending: 'Envoi...',
+    submitError: 'Une erreur est survenue, veuillez réessayer.',
+    successMessage: 'Votre message a bien été envoyé, nous vous répondrons rapidement.',
+    newTicket: 'Envoyer un autre message'
+  },
+  admin: {
+    title: 'Administration',
+    tabStats: 'Statistiques',
+    tabUsers: 'Utilisateurs',
+    tabSupport: 'Support',
+    categoryLabels: {
+      technical: 'Support technique',
+      billing: 'Facturation et Abonnement',
+      idea: 'Boîte à idées'
+    },
+    stats: {
+      freeUsers: 'Utilisateurs gratuits',
+      paidUsers: 'Utilisateurs payants',
+      totalLogins: 'Connexions totales',
+      recentLogins: 'Connexions (7 derniers jours)',
+      totalImages: 'Images générées',
+      avgPerBatch: 'Moyenne images / génération',
+      avgPerUser: 'Moyenne images / utilisateur',
+      avgSavedPerFolder: 'Moyenne images sauvegardées / dossier',
+      topActive: 'Utilisateurs les plus actifs'
+    },
+    users: {
+      addButton: 'Ajouter un utilisateur',
+      editButton: 'Modifier',
+      searchPlaceholder: 'Rechercher par email ou nom...',
+      email: 'Email',
+      name: 'Nom',
+      confirmed: 'Confirmé',
+      confirmedYes: 'Confirmé',
+      confirmedNo: 'Non confirmé',
+      admin: 'Admin',
+      credits: 'Crédits',
+      signIns: 'Connexions',
+      subscription: 'Abonnement',
+      prevPage: 'Précédent',
+      nextPage: 'Suivant',
+      saveError: 'Une erreur est survenue.'
+    },
+    support: {
+      allStatuses: 'Tous',
+      notesPlaceholder: 'Notes internes...',
+      empty: 'Aucun ticket pour le moment.'
+    },
+    ticketStatus: {
+      open: 'Ouvert',
+      in_progress: 'En cours',
+      resolved: 'Résolu',
+      closed: 'Fermé'
+    }
   }
 }
