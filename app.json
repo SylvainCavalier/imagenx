@@ -21,7 +21,7 @@
       "required": true
     },
     "APP_HOST": {
-      "description": "Public hostname used for mailer links and Host header allowlist (e.g. app.sbclabs.fr)",
+      "description": "Public hostname used for mailer links and Host header allowlist (imagenx.fr)",
       "required": true
     },
     "RAILS_LOG_LEVEL": {

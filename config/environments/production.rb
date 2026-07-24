@@ -118,10 +118,11 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # *.herokuapp.com is kept as a fallback host until the sbclabs.fr DNS cutover is done;
-  # remove it once app.sbclabs.fr is the only way the app is reached.
+  # *.herokuapp.com is kept as a fallback host until the imagenx.fr DNS cutover is done;
+  # remove it once imagenx.fr is the only way the app is reached.
   config.hosts = [
-    ENV.fetch("APP_HOST", "app.sbclabs.fr"),
+    ENV.fetch("APP_HOST", "imagenx.fr"),
+    "www.imagenx.fr",
     /.*\.herokuapp\.com/
   ]
   # Skip DNS rebinding protection for the default health check endpoint.
