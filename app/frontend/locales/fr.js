@@ -4,6 +4,7 @@ export default {
     dashboard: 'Tableau de bord',
     myImages: 'Mes images',
     history: 'Historique',
+    account: 'Mon compte',
     logout: 'Déconnexion',
     credits: '{count} crédit | {count} crédits'
   },
@@ -152,7 +153,7 @@ export default {
       subtitle: 'ImageNX génère plusieurs images IA à la fois à partir d\'un prompt principal partagé et d\'un prompt propre à chaque image. Rapide, cohérent, sans jargon technique.',
       ctaPrimary: 'Créer un compte gratuit',
       ctaSecondary: 'Se connecter',
-      creditsNote: '20 crédits offerts à l\'inscription, sans carte bancaire.'
+      creditsNote: '80 crédits offerts à l\'inscription, sans carte bancaire.'
     },
     howItWorks: {
       title: 'Comment ça marche',
@@ -186,14 +187,65 @@ export default {
     pricing: {
       title: 'Payez à l\'usage',
       body: 'Pas d\'abonnement, pas d\'engagement. Rechargez des crédits et utilisez-les au fil de vos générations.',
-      trialTitle: '20 crédits offerts',
-      trialBody: 'Testez ImageNX gratuitement dès la création de votre compte, sans carte bancaire.'
+      trialTitle: '80 crédits offerts',
+      trialBody: 'Testez ImageNX gratuitement dès la création de votre compte, sans carte bancaire — de quoi générer une dizaine d\'images.'
     },
     footer: {
       tagline: 'Génération d\'images IA par lots, cohérente et sans effort.',
       loginLink: 'Connexion',
       registerLink: 'Créer un compte',
       copyright: '© {year} ImageNX'
+    }
+  },
+  account: {
+    title: 'Mon compte',
+    profile: {
+      title: 'Profil',
+      nameLabel: 'Nom',
+      emailLabel: 'Email',
+      currentPasswordLabel: 'Mot de passe actuel',
+      newPasswordLabel: 'Nouveau mot de passe',
+      newPasswordPlaceholder: 'Laisser vide pour ne pas changer',
+      passwordConfirmationLabel: 'Confirmer le nouveau mot de passe',
+      saveSecurity: 'Mettre à jour',
+      securityUpdated: 'Informations mises à jour.'
+    },
+    credits: {
+      title: 'Crédits',
+      topupTitle: 'Recharger des crédits',
+      creditsCount: '{count} crédit | {count} crédits'
+    },
+    subscription: {
+      title: 'Abonnement',
+      pitch: 'Abonnez-vous pour 5€/mois et recevez 600 crédits chaque mois, sans engagement.',
+      subscribeButton: "S'abonner — 5€/mois pour 600 crédits",
+      manageButton: 'Gérer mon abonnement',
+      billingHistory: 'Voir mon historique de facturation',
+      renewsOn: 'renouvellement le {date}',
+      cancelingOn: 'se termine le {date}',
+      status: {
+        active: 'Abonnement actif',
+        trialing: "Période d'essai en cours",
+        past_due: 'Paiement en retard',
+        canceled: 'Abonnement résilié'
+      }
+    },
+    history: {
+      title: 'Historique des crédits',
+      empty: 'Aucun mouvement pour le moment.',
+      balance: 'solde : {balance}',
+      reasons: {
+        trialGrant: "Crédits d'essai offerts",
+        generationDebit: 'Génération d\'images',
+        generationRefund: 'Remboursement (échec de génération)',
+        topupPurchase: 'Recharge de crédits',
+        subscriptionGrant: "Crédits d'abonnement",
+        adminAdjustment: 'Ajustement manuel'
+      }
+    },
+    checkout: {
+      successMessage: 'Paiement reçu, mise à jour de votre solde...',
+      cancelMessage: 'Paiement annulé.'
     }
   },
   notFound: {

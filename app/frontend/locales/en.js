@@ -4,6 +4,7 @@ export default {
     dashboard: 'Dashboard',
     myImages: 'My Images',
     history: 'History',
+    account: 'My Account',
     logout: 'Logout',
     credits: '{count} credit | {count} credits'
   },
@@ -152,7 +153,7 @@ export default {
       subtitle: 'ImageNX generates several AI images at once from a shared main prompt plus a prompt of its own for each image. Fast, coherent, no prompt-engineering jargon required.',
       ctaPrimary: 'Create a free account',
       ctaSecondary: 'Sign in',
-      creditsNote: '20 free credits on signup, no credit card required.'
+      creditsNote: '80 free credits on signup, no credit card required.'
     },
     howItWorks: {
       title: 'How it works',
@@ -186,14 +187,65 @@ export default {
     pricing: {
       title: 'Pay as you go',
       body: 'No subscription, no commitment. Top up credits and use them as you generate images.',
-      trialTitle: '20 free credits',
-      trialBody: 'Try ImageNX for free as soon as you create your account, no credit card required.'
+      trialTitle: '80 free credits',
+      trialBody: 'Try ImageNX for free as soon as you create your account, no credit card required — enough for about 10 images.'
     },
     footer: {
       tagline: 'Coherent, effortless batch AI image generation.',
       loginLink: 'Sign in',
       registerLink: 'Create an account',
       copyright: '© {year} ImageNX'
+    }
+  },
+  account: {
+    title: 'My Account',
+    profile: {
+      title: 'Profile',
+      nameLabel: 'Name',
+      emailLabel: 'Email',
+      currentPasswordLabel: 'Current password',
+      newPasswordLabel: 'New password',
+      newPasswordPlaceholder: 'Leave blank to keep unchanged',
+      passwordConfirmationLabel: 'Confirm new password',
+      saveSecurity: 'Update',
+      securityUpdated: 'Account details updated.'
+    },
+    credits: {
+      title: 'Credits',
+      topupTitle: 'Top up credits',
+      creditsCount: '{count} credit | {count} credits'
+    },
+    subscription: {
+      title: 'Subscription',
+      pitch: 'Subscribe for €5/month and get 600 credits every month, no commitment.',
+      subscribeButton: 'Subscribe — €5/month for 600 credits',
+      manageButton: 'Manage subscription',
+      billingHistory: 'View billing history',
+      renewsOn: 'renews on {date}',
+      cancelingOn: 'ends on {date}',
+      status: {
+        active: 'Active subscription',
+        trialing: 'Trial in progress',
+        past_due: 'Payment past due',
+        canceled: 'Subscription canceled'
+      }
+    },
+    history: {
+      title: 'Credit history',
+      empty: 'No activity yet.',
+      balance: 'balance: {balance}',
+      reasons: {
+        trialGrant: 'Free trial credits',
+        generationDebit: 'Image generation',
+        generationRefund: 'Refund (generation failed)',
+        topupPurchase: 'Credit top-up',
+        subscriptionGrant: 'Subscription credits',
+        adminAdjustment: 'Manual adjustment'
+      }
+    },
+    checkout: {
+      successMessage: 'Payment received, updating your balance...',
+      cancelMessage: 'Checkout canceled.'
     }
   },
   notFound: {

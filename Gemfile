@@ -62,6 +62,9 @@ gem "rack-attack" # Rate limiting
 gem "secure_headers" # Content security policy
 gem "invisible_captcha" # Prevent bots from submitting forms
 
+# Payments
+gem "stripe" # Stripe API client
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
@@ -84,4 +87,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara" # System testing
   gem "selenium-webdriver" # System testing
+  gem "webmock" # Stub outbound HTTP calls (Stripe API) in specs
 end

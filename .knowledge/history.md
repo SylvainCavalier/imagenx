@@ -5,6 +5,17 @@ Les nouvelles entrées sont ajoutées par la commande `/historyupdate` en fin de
 
 ---
 
+### 2026-07-24 — Intégration Stripe : crédits payants et abonnement
+- [feat] Système de recharge de crédits via Stripe Checkout : 4 paliers ponctuels (3€/5€/10€/20€) et abonnement à 5€/mois (600 crédits, bonus incitatif vs recharge ponctuelle) ; gestion de l'abonnement (résiliation, moyen de paiement, factures) déléguée au Stripe Customer Portal
+- [feat] Page "Mon compte" (`/app/account`) : profil (nom, email, mot de passe), solde et recharge de crédits, statut d'abonnement, historique des mouvements de crédits
+- [improve] Première logique de débit de crédits à la génération d'images (jusqu'ici gratuite et illimitée) : coût fixe de 8 crédits/image (~2x le coût réel de l'appel Replicate), débit atomique protégé contre les doubles soumissions concurrentes, remboursement automatique par image en cas d'échec de génération
+- [improve] Crédits d'essai à l'inscription relevés de 20 à 80 (~10 images), pour couvrir un vrai test de la génération groupée
+- [api] Intégration Stripe complète : webhooks (`checkout.session.completed`, `invoice.payment_succeeded`, `customer.subscription.updated/.deleted`) avec idempotence garantie en base, endpoint dédié hors authentification SPA
+- [db] Nouvelles tables `credit_transactions` (ledger d'audit de tous les mouvements de crédits) et `stripe_events` (déduplication des webhooks), nouvelles colonnes de facturation sur `users` (nom, identifiants Stripe, statut d'abonnement)
+- [security] Débit de crédits testé sous accès concurrent réel (plusieurs requêtes simultanées ne peuvent jamais faire passer le solde en négatif)
+- [chore] Suite de tests RSpec remise en état (l'installation était incomplète, aucun test ne pouvait tourner) et complétée avec la couverture du nouveau système de facturation
+- [chore] Tâches rake `stripe:setup` (création idempotente du catalogue Stripe) et `credits:backfill_ledger` (réconciliation du ledger pour les comptes existants)
+
 ### 2026-07-24 — Landing page et système de comptes production-ready
 - [feat] Landing page publique à `/` (hero, comment ça marche, bénéfices, galerie d'exemples, teaser crédits, footer) — l'app authentifiée est déplacée sous `/app/*`
 - [feat] Confirmation d'email obligatoire avant connexion et accès API (Devise `:confirmable`, gate explicite dans `Api::BaseController` puisque les routes Devise sont désactivées et Warden ne bloque rien automatiquement)

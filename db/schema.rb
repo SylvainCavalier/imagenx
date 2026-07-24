@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_23_223443) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_24_153649) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_23_223443) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "credit_transactions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "amount", null: false
+    t.integer "balance_after", null: false
+    t.string "reason", null: false
+    t.string "source_type"
+    t.bigint "source_id"
+    t.string "stripe_event_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_type", "source_id"], name: "index_credit_transactions_on_source"
+    t.index ["stripe_event_id"], name: "index_credit_transactions_on_stripe_event_id"
+    t.index ["user_id", "created_at"], name: "index_credit_transactions_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_credit_transactions_on_user_id"
   end
 
   create_table "generation_batches", force: :cascade do |t|
@@ -183,6 +200,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_23_223443) do
     t.index ["image_folder_id"], name: "index_saved_images_on_image_folder_id"
   end
 
+  create_table "stripe_events", force: :cascade do |t|
+    t.string "stripe_event_id", null: false
+    t.string "event_type", null: false
+    t.datetime "processed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stripe_event_id"], name: "index_stripe_events_on_stripe_event_id", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -197,14 +223,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_23_223443) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.integer "credits_balance", default: 0, null: false
+    t.string "name"
+    t.string "stripe_customer_id"
+    t.string "stripe_subscription_id"
+    t.string "subscription_status"
+    t.string "subscription_plan"
+    t.datetime "subscription_current_period_end"
+    t.boolean "subscription_cancel_at_period_end", default: false, null: false
     t.index ["api_token"], name: "index_users_on_api_token", unique: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["stripe_customer_id"], name: "index_users_on_stripe_customer_id", unique: true
+    t.index ["stripe_subscription_id"], name: "index_users_on_stripe_subscription_id", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "credit_transactions", "users"
   add_foreign_key "generation_batches", "users"
   add_foreign_key "generation_items", "generation_batches"
   add_foreign_key "image_folders", "users"

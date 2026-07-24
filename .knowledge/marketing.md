@@ -30,14 +30,27 @@ de lancer chaque génération une par une avec le risque de dérive de style ent
   brancher ses agents directement sur ImageNX. Un skill Claude dédié (`imagenx-generate`) est
   fourni pour se connecter facilement et indiquer à l'agent quoi générer — **fonctionnalité déjà
   réelle aujourd'hui**, pas une promesse.
-- **Essai gratuit** : quelques crédits offerts à la création du compte, sans carte bancaire
-  (`User::TRIAL_CREDITS`, 20 crédits au lancement), pour tester le service sans engagement.
+- **Essai gratuit** : crédits offerts à la création du compte, sans carte bancaire
+  (`User::TRIAL_CREDITS`, 80 crédits au lancement — l'équivalent d'une dizaine d'images),
+  pour tester le service sans engagement, y compris la génération groupée et la sauvegarde
+  d'images.
+- **Rechargement de crédits** : 4 paliers ponctuels (3€/5€/10€/20€) via Stripe Checkout,
+  au tarif fixe de 8 crédits par image générée (0,08€, environ 2x le coût réel de l'appel
+  API Replicate). Le nombre de crédits décrémenté à chaque génération est fixe et visible,
+  peu importe les variations de coût réel côté fournisseur.
+- **Abonnement optionnel** : 5€/mois pour 600 crédits (bonus par rapport à une recharge
+  ponctuelle de même montant), sans quitter l'esprit paiement à l'usage — l'abonnement
+  alimente le même solde de crédits, qui ne périme jamais et ne dépend pas d'un
+  engagement contractuel au-delà du mois en cours. Gestion (résiliation, moyen de
+  paiement, factures) déléguée au Stripe Customer Portal.
 
-## État d'implémentation (2026-07-23)
+## État d'implémentation (2026-07-24)
 
-- Crédits d'essai : implémentés au niveau minimal (solde `credits_balance`, crédit initial à
-  l'inscription, affiché dans la navbar). **Aucune logique de débit/consommation ni de paiement
-  n'existe encore** — chantier séparé, à construire avec Stripe le moment venu.
+- Crédits, paiement à l'usage et abonnement : **entièrement implémentés** (modèle `User`,
+  ledger `CreditTransaction`, webhooks Stripe, page "Mon compte"). Reste à faire côté
+  Sylvain avant mise en prod : lancer `rails stripe:setup` pour créer le catalogue Stripe
+  (produits/prix), enregistrer l'endpoint webhook une fois le domaine déployé, et confirmer
+  le passage des clés live/test selon le contexte.
 - Connexion agents IA (API + skill) : déjà fonctionnelle, utilisée en interne par Sylvain.
 - Landing page publique : construite en juillet 2026, ton sobre et élégant sur fond sombre,
   reprenant la palette existante de l'app (gris foncé + accent indigo) pour que la page ressemble

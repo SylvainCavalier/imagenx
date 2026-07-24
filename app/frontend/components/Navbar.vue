@@ -27,6 +27,13 @@
           >
             {{ t('nav.history') }}
           </router-link>
+          <router-link
+            to="/app/account"
+            active-class="text-white"
+            class="text-sm text-gray-300 hover:text-white transition-colors"
+          >
+            {{ t('nav.account') }}
+          </router-link>
         </div>
         <div class="flex items-center space-x-4">
           <div class="flex items-center space-x-1.5">
@@ -49,9 +56,9 @@
               🇬🇧
             </button>
           </div>
-          <span class="text-sm text-gray-500">
+          <router-link to="/app/account" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">
             {{ t('nav.credits', { count: authStore.currentUser?.credits_balance ?? 0 }) }}
-          </span>
+          </router-link>
           <span class="text-sm text-gray-400">{{ authStore.currentUser?.email }}</span>
           <button
             @click="handleLogout"

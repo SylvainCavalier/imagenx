@@ -95,9 +95,15 @@ module Api
       {
         id: user.id,
         email: user.email,
+        name: user.name,
         created_at: user.created_at,
         confirmed: user.confirmed?,
-        credits_balance: user.credits_balance
+        credits_balance: user.credits_balance,
+        subscription_status: user.subscription_status,
+        subscription_plan: user.subscription_plan,
+        subscription_current_period_end: user.subscription_current_period_end,
+        subscription_cancel_at_period_end: user.subscription_cancel_at_period_end,
+        has_stripe_customer: user.stripe_customer_id.present?
       }
     end
   end

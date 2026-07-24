@@ -6,6 +6,13 @@ class Rack::Attack
     Rails.env.development? && ['127.0.0.1', '::1'].include?(req.ip)
   end
 
+  # Never throttle Stripe webhook retries — a blocked retry that eventually gives up
+  # means a purchase/renewal silently never credits the user. Authenticity is verified
+  # by the webhook controller's own Stripe signature check, not by rate limiting.
+  Rack::Attack.safelist('allow-stripe-webhooks') do |req|
+    req.path == '/webhooks/stripe' && req.post?
+  end
+
   # Throttle login attempts by IP address (real endpoint — devise_for :users, skip: :all
   # means the classic /users/sign_in route doesn't exist here, auth lives under /api/auth)
   Rack::Attack.throttle('login attempts by ip', limit: 5, period: 60.seconds) do |req|

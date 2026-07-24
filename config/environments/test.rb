@@ -44,6 +44,10 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
+  # Needed for mailer views that build links (Devise confirmation/reset emails) —
+  # without it, rendering those views raises "Missing host to link to!".
+  config.action_mailer.default_url_options = { host: 'localhost', port: ENV.fetch('PORT', 3020) }
+
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 

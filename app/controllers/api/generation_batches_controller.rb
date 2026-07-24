@@ -3,6 +3,8 @@ module Api
     # Disable automatic parameter wrapping for this controller
     wrap_parameters false
 
+    class InsufficientCredits < StandardError; end
+
     def index
       batches = current_user.generation_batches.recent.includes(:generation_items)
       render json: batches.map { |b| batch_json(b) }
@@ -22,7 +24,13 @@ module Api
         return render json: { error: 'At least one image prompt is required' }, status: :unprocessable_entity
       end
 
+      total_cost = items_data.size * User::GENERATION_COST_PER_IMAGE
+
       ActiveRecord::Base.transaction do
+        unless User.debit_credits(current_user.id, total_cost)
+          raise InsufficientCredits
+        end
+
         batch.save!
         items_data.each_with_index do |item, index|
           batch.generation_items.create!(
@@ -31,6 +39,13 @@ module Api
             status: 'pending'
           )
         end
+
+        current_user.credit_transactions.create!(
+          amount: -total_cost,
+          balance_after: current_user.reload.credits_balance,
+          reason: 'generation_debit',
+          source: batch
+        )
       end
 
       batch.update!(status: 'processing')
@@ -39,6 +54,8 @@ module Api
       end
 
       render json: batch_json(batch.reload), status: :created
+    rescue InsufficientCredits
+      render json: { error: 'Not enough credits' }, status: :unprocessable_entity
     rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
     end

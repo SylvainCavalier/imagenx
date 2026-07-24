@@ -29,7 +29,13 @@ Rails.application.routes.draw do
       end
     end
     resources :prompt_presets, only: [:index, :create, :update, :destroy]
+    resource :account, only: [:show, :update], controller: 'account'
+    resources :checkout_sessions, only: [:create]
+    resources :portal_sessions, only: [:create]
+    resources :credit_transactions, only: [:index]
   end
+
+  post '/webhooks/stripe', to: 'webhooks#stripe'
 
   get '*path', to: 'spa#index', constraints: ->(req) { !req.xhr? && req.format.html? }
 end

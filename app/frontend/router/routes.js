@@ -52,6 +52,12 @@ export default [
     meta: { requiresAuth: true }
   },
   {
+    path: '/app/account',
+    name: 'Account',
+    component: () => import('../pages/Account.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../pages/NotFound.vue'),

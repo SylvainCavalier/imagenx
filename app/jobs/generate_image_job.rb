@@ -15,9 +15,23 @@ class GenerateImageJob < ApplicationJob
     item.update!(status: 'completed', image_url: image_url)
   rescue ImageGenerator::GenerationError => e
     item&.update!(status: 'failed', error_message: e.message)
+    refund_credits!(item)
   rescue => e
     item&.update!(status: 'failed', error_message: "Unexpected error: #{e.message}")
+    refund_credits!(item)
   ensure
     batch&.update_status!
+  end
+
+  private
+
+  def refund_credits!(item)
+    return unless item
+
+    item.generation_batch.user.add_credits!(
+      User::GENERATION_COST_PER_IMAGE,
+      reason: 'generation_refund',
+      source: item
+    )
   end
 end
