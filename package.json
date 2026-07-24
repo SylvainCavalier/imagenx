@@ -4,11 +4,12 @@
   "type": "module",
   "license": "MIT",
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "bin/vite dev",
     "build": "bin/vite build",
+    "heroku-postbuild": "echo 'Skipping JS build in the Node buildpack phase (no Ruby yet) — vite_rails runs it via bin/rails assets:precompile in the Ruby buildpack phase instead'",
     "lint": "eslint app/frontend",
     "lint:fix": "eslint app/frontend --fix"
   },
