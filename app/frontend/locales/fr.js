@@ -196,7 +196,10 @@ export default {
       tagline: 'Génération d\'images IA par lots, cohérente et sans effort.',
       loginLink: 'Connexion',
       registerLink: 'Créer un compte',
-      copyright: '© {year} ImageNX'
+      copyright: '© {year} ImageNX',
+      legalMentions: 'Mentions légales',
+      legalPrivacy: 'Confidentialité',
+      legalTerms: 'CGU/CGV'
     }
   },
   account: {

@@ -5,6 +5,12 @@ Les nouvelles entrées sont ajoutées par la commande `/historyupdate` en fin de
 
 ---
 
+### 2026-07-25 — Pages légales (mentions, confidentialité, CGU/CGV)
+- [feat] Trois pages légales publiques accessibles à tous (connectés compris) : mentions légales (`/mentions-legales`), politique de confidentialité RGPD (`/confidentialite`) et CGU/CGV (`/cgu-cgv`), rédigées en français, thème sombre existant, dans `app/frontend/pages/Legal/`
+- [feat] Composant `Footer.vue` partagé extrait du footer inline de la Landing, avec une nouvelle ligne de liens vers les 3 pages légales ; réutilisé sur la Landing et les pages légales (libellés de liens bilingues fr/en, contenu des pages en français uniquement)
+- [feat] Contenu juridique aligné sur l'éditeur SBC Labs (EI Sylvain Bertrand-Cavalier, SIRET, code APE 6201Z, franchise TVA art. 293 B, micro-entreprise non immatriculée au RCS, adresse de domiciliation Montreuil, hébergeur Heroku/Salesforce) ; confidentialité couvrant les sous-traitants (Replicate, Stripe, Sweego, Heroku) et les transferts hors UE ; CGV décrivant les crédits Stripe (8 crédits/image, recharges 3/5/10/20 €, abonnement 5 €/mois, essai 80 crédits), rétractation sur contenu numérique et médiateur de la consommation CM2C
+- [chore] Routes Vue sans meta (aucune modification de Rails, le catch-all SPA sert déjà ces chemins) et libellés i18n ajoutés sous `landing.footer` dans `fr.js`/`en.js`
+
 ### 2026-07-25 — Dashboard admin et système de support
 - [feat] Dashboard admin à `/admin`, réservé au compte administrateur (nouvelle colonne `admin` sur `users`, autorisation par simple booléen sans Pundit) : onglets Statistiques, Utilisateurs, Support
 - [feat] Onglet Statistiques : utilisateurs gratuits/payants, connexions totales et récentes, images générées, moyenne d'images par génération/par utilisateur, moyenne d'images sauvegardées par dossier, top utilisateurs actifs

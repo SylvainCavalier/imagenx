@@ -70,6 +70,21 @@ export default [
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
+    path: '/mentions-legales',
+    name: 'MentionsLegales',
+    component: () => import('../pages/Legal/MentionsLegales.vue'),
+  },
+  {
+    path: '/confidentialite',
+    name: 'Confidentialite',
+    component: () => import('../pages/Legal/Confidentialite.vue'),
+  },
+  {
+    path: '/cgu-cgv',
+    name: 'CguCgv',
+    component: () => import('../pages/Legal/CguCgv.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../pages/NotFound.vue'),

@@ -196,7 +196,10 @@ export default {
       tagline: 'Coherent, effortless batch AI image generation.',
       loginLink: 'Sign in',
       registerLink: 'Create an account',
-      copyright: '© {year} ImageNX'
+      copyright: '© {year} ImageNX',
+      legalMentions: 'Legal notice',
+      legalPrivacy: 'Privacy',
+      legalTerms: 'Terms'
     }
   },
   account: {
