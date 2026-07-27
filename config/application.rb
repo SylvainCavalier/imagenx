@@ -14,10 +14,13 @@ module Imagenx
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w(assets tasks))
-    
+    config.autoload_lib(ignore: %w[assets tasks])
+
     # Add Rack::Attack middleware for rate limiting
     config.middleware.use Rack::Attack
+
+    # Retry transient SMTP failures instead of dropping the email (see MailDeliveryJob).
+    config.action_mailer.delivery_job = "MailDeliveryJob"
 
     # Configuration for the application, engines, and railties goes here.
     #

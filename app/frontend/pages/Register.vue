@@ -8,6 +8,7 @@
 
       <div v-if="registered" class="bg-gray-900 rounded-2xl p-8 shadow-xl border border-gray-800 text-center">
         <p class="text-gray-300">{{ t('auth.checkEmailBody', { email: registeredEmail }) }}</p>
+        <p v-if="resent" class="mt-3 text-sm text-amber-300">{{ t('auth.checkEmailResent') }}</p>
         <router-link to="/login" class="mt-4 inline-block text-indigo-400 hover:text-indigo-300 text-sm">
           {{ t('auth.signIn') }}
         </router-link>
@@ -99,6 +100,7 @@ const passwordConfirmation = ref('')
 const subtitle = ref('') // honeypot, must stay empty
 const registered = ref(false)
 const registeredEmail = ref('')
+const resent = ref(false)
 
 const handleRegister = async () => {
   authStore.clearError()
@@ -111,6 +113,7 @@ const handleRegister = async () => {
   if (result.success) {
     registered.value = true
     registeredEmail.value = result.email
+    resent.value = result.resent
   }
 }
 </script>

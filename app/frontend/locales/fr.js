@@ -141,6 +141,7 @@ export default {
     backToLogin: 'Retour à la connexion',
     checkEmailTitle: 'Vérifiez votre boîte mail',
     checkEmailBody: 'Un email de confirmation a été envoyé à {email}. Cliquez sur le lien qu\'il contient pour activer votre compte et vos crédits offerts.',
+    checkEmailResent: 'Ce compte existait déjà sans avoir été confirmé : nous vous avons simplement renvoyé l\'email. Connectez-vous avec le mot de passe choisi lors de votre première inscription (ou utilisez « mot de passe oublié »).',
     confirmingEmail: 'Confirmation en cours...',
     confirmSuccess: 'Email confirmé ! Vous pouvez maintenant vous connecter.',
     confirmError: 'Ce lien de confirmation est invalide ou a expiré.',

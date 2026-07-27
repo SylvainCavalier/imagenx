@@ -141,6 +141,7 @@ export default {
     backToLogin: 'Back to sign in',
     checkEmailTitle: 'Check your email',
     checkEmailBody: 'A confirmation email was sent to {email}. Click the link inside to activate your account and your free credits.',
+    checkEmailResent: 'This account already existed but was never confirmed: we simply sent the email again. Sign in with the password you chose on your first attempt (or use "forgot password").',
     confirmingEmail: 'Confirming...',
     confirmSuccess: 'Email confirmed! You can now sign in.',
     confirmError: 'This confirmation link is invalid or has expired.',

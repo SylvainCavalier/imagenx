@@ -3,7 +3,11 @@ require "test_helper"
 module Api
   class GenerationBatchesControllerTest < ActionDispatch::IntegrationTest
     setup do
+      # Creating a user sends a Devise confirmation email, whose mailer resolves its
+      # mapping from the routes — which Rails only loads on the first request.
+      Rails.application.reload_routes_unless_loaded
       @user = User.create!(email: "agent@example.com", password: "password123")
+      @user.confirm # the API refuses unconfirmed accounts, bearer token or not
     end
 
     test "creates a batch with a valid bearer token, no session or CSRF needed" do

@@ -65,7 +65,14 @@ export const useAuthStore = defineStore('auth', {
         // No session is created here: the backend requires email confirmation
         // before granting access, so we don't setUser — the caller shows a
         // "check your email" state instead of redirecting into the app.
-        return { success: true, email: response.data.email, message: response.data.message }
+        // resent: the account already existed unconfirmed and only got a new email —
+        // its original password still applies, which the caller warns about.
+        return {
+          success: true,
+          email: response.data.email,
+          message: response.data.message,
+          resent: response.data.resent === true
+        }
       } catch (error) {
         const message = error.response?.data?.error || 'Registration failed'
         this.error = message

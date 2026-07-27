@@ -24,7 +24,8 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = ENV.fetch("MAILER_FROM", "noreply@imagenx.app")
+  # Must stay on the Sweego-verified sending domain `mail.imagenx.fr` (see ApplicationMailer).
+  config.mailer_sender = ENV.fetch("MAILER_FROM", "noreply@mail.imagenx.fr")
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'

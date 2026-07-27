@@ -88,6 +88,14 @@ class User < ApplicationRecord
       .update_all(["credits_balance = credits_balance - ?", amount]) == 1
   end
 
+  # Devise delivers its emails inline, from an `after_commit` hook on create. An SMTP
+  # failure therefore raised *after* the user row was committed: the request 500'd while
+  # the account existed, and the retry hit "Email has already been taken". Queueing the
+  # delivery keeps signup atomic from the user's point of view and lets the job retry.
+  def send_devise_notification(notification, *)
+    devise_mailer.send(notification, self, *).deliver_later
+  end
+
   private
 
   def grant_trial_credits
