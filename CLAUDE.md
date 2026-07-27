@@ -6,14 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Rails 8.0 monolith with Vue 3 SPA frontend. Single domain architecture where Vue handles all UI and Rails serves as API backend. Uses Vite for frontend build tooling.
 
-## Stripe CLI
-
-This project has its own Stripe account. **Always use**:
-```bash
-stripe --project-name imagenx <command>
-```
-Never run `stripe` without this flag here — the CLI's active profile is shared across 3 unrelated projects (prudo, langochat, imagenx) and may point at the wrong account.
-
 ## Common Commands
 
 ### Development
