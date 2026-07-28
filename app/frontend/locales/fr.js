@@ -8,7 +8,9 @@ export default {
     support: 'Support',
     admin: 'Admin',
     logout: 'Déconnexion',
-    credits: '{count} crédit | {count} crédits'
+    credits: '{count} crédit | {count} crédits',
+    creditsTitle: 'Votre solde de crédits — cliquez pour recharger',
+    creditsLow: 'Solde bas : plus assez de crédits pour une image. Cliquez pour recharger.'
   },
   common: {
     cancel: 'Annuler',
@@ -200,7 +202,8 @@ export default {
       copyright: '© {year} ImageNX',
       legalMentions: 'Mentions légales',
       legalPrivacy: 'Confidentialité',
-      legalTerms: 'CGU/CGV'
+      legalTerms: 'CGU/CGV',
+      builtBy: 'Développé par'
     }
   },
   account: {

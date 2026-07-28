@@ -5,6 +5,14 @@ Les nouvelles entrées sont ajoutées par la commande `/historyupdate` en fin de
 
 ---
 
+### 2026-07-27 — Fix de l'inscription cassée en production
+- [fix] Inscription impossible en production : l'email de confirmation partait avec un expéditeur `noreply@imagenx.app` que le relais Sweego rejetait (`550 Unknow domain`), ce qui faisait planter la requête en 500 **après** la création du compte en base — toute nouvelle tentative se heurtait ensuite à "Email has already been taken"
+- [infra] Le domaine d'envoi vérifié chez Sweego est `mail.imagenx.fr` (et non l'apex `imagenx.fr`) : variable `MAILER_FROM=noreply@mail.imagenx.fr` posée sur Heroku, mêmes valeurs en fallback dans `ApplicationMailer` et l'initializer Devise, information documentée dans le `CLAUDE.md`
+- [improve] Les notifications Devise (confirmation, réinitialisation de mot de passe) partent désormais en asynchrone via `deliver_later` : une panne du relais SMTP ne peut plus faire échouer la requête d'inscription une fois l'utilisateur enregistré
+- [improve] Nouveau `MailDeliveryJob` qui retente les échecs SMTP transitoires (5 tentatives, backoff progressif) sans insister sur les erreurs permanentes type 550
+- [improve] S'inscrire à nouveau avec l'email d'un compte existant mais non confirmé renvoie l'email de confirmation au lieu de renvoyer une erreur bloquante ; le mot de passe d'origine n'est pas écrasé et un message dédié le précise sur l'écran de confirmation
+- [chore] Tests d'inscription ajoutés (`test/controllers/api/auth_controller_test.rb`) couvrant la régression du compte orphelin ; réparation de `generation_batches_controller_test.rb`, cassé indépendamment (routes Devise chargées trop tard pour le mailer, et compte de test non confirmé donc rejeté par l'API)
+
 ### 2026-07-25 — Pages légales (mentions, confidentialité, CGU/CGV)
 - [feat] Trois pages légales publiques accessibles à tous (connectés compris) : mentions légales (`/mentions-legales`), politique de confidentialité RGPD (`/confidentialite`) et CGU/CGV (`/cgu-cgv`), rédigées en français, thème sombre existant, dans `app/frontend/pages/Legal/`
 - [feat] Composant `Footer.vue` partagé extrait du footer inline de la Landing, avec une nouvelle ligne de liens vers les 3 pages légales ; réutilisé sur la Landing et les pages légales (libellés de liens bilingues fr/en, contenu des pages en français uniquement)

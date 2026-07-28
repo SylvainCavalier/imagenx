@@ -8,7 +8,9 @@ export default {
     support: 'Support',
     admin: 'Admin',
     logout: 'Logout',
-    credits: '{count} credit | {count} credits'
+    credits: '{count} credit | {count} credits',
+    creditsTitle: 'Your credit balance — click to top up',
+    creditsLow: 'Low balance: not enough credits left for one image. Click to top up.'
   },
   common: {
     cancel: 'Cancel',
@@ -200,7 +202,8 @@ export default {
       copyright: '© {year} ImageNX',
       legalMentions: 'Legal notice',
       legalPrivacy: 'Privacy',
-      legalTerms: 'Terms'
+      legalTerms: 'Terms',
+      builtBy: 'Built by'
     }
   },
   account: {

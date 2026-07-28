@@ -18,6 +18,11 @@
         <router-link to="/confidentialite" class="text-gray-500 hover:text-white transition-colors">{{ t('landing.footer.legalPrivacy') }}</router-link>
         <span class="text-gray-700">·</span>
         <router-link to="/cgu-cgv" class="text-gray-500 hover:text-white transition-colors">{{ t('landing.footer.legalTerms') }}</router-link>
+        <span class="text-gray-700">·</span>
+        <span class="text-gray-500">
+          {{ t('landing.footer.builtBy') }}
+          <a href="https://sbclabs.fr" target="_blank" rel="noopener" class="hover:text-white transition-colors">SBC Labs</a>
+        </span>
       </div>
     </div>
   </footer>
