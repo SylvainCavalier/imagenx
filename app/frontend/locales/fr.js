@@ -18,6 +18,7 @@ export default {
     delete: 'Supprimer',
     rename: 'Renommer',
     loading: 'Chargement...',
+    close: 'Fermer',
     backToHome: 'Retour à l\'accueil',
     status: {
       pending: 'En attente',
@@ -256,6 +257,23 @@ export default {
       successMessage: 'Paiement reçu, mise à jour de votre solde...',
       cancelMessage: 'Paiement annulé.'
     }
+  },
+  creditsModal: {
+    title: 'Rechargez vos crédits',
+    balance: 'Solde actuel : {count} crédit | Solde actuel : {count} crédits',
+    remainingImages: 'de quoi générer environ {count} image | de quoi générer environ {count} images',
+    topupTitle: 'Recharge ponctuelle, sans engagement',
+    creditsCount: '{count} crédit | {count} crédits',
+    imagesApprox: '≈ {count} image | ≈ {count} images',
+    costNote: 'Chaque image générée coûte {cost} crédits. Vos crédits n\'expirent pas.',
+    subscription: {
+      title: 'Abonnement mensuel — 5€/mois',
+      pitch: '{credits} crédits crédités chaque mois, soit environ {images} images. Résiliable à tout moment.',
+      badge: '+20% de crédits',
+      cta: 'S\'abonner — 5€/mois',
+      manageCta: 'Gérer mon abonnement'
+    },
+    accountLink: 'Voir le détail de mon compte et l\'historique de mes crédits'
   },
   notFound: {
     message: 'Page non trouvée'

@@ -82,7 +82,7 @@
       <p class="text-sm text-gray-400 mb-3">{{ t('account.credits.topupTitle') }}</p>
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <button
-          v-for="pack in topupPacks"
+          v-for="pack in TOPUP_PACKS"
           :key="pack.key"
           @click="buy(pack.key)"
           :disabled="billingStore.loading"
@@ -170,6 +170,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useBillingStore } from '../stores/billing'
+import { TOPUP_PACKS } from '../constants/credits'
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -184,13 +185,6 @@ const newPasswordConfirmation = ref('')
 const currentPassword = ref('')
 const securityMessage = ref('')
 const checkoutBanner = ref('')
-
-const topupPacks = [
-  { key: 'topup_300', price: '3€', credits: 300 },
-  { key: 'topup_500', price: '5€', credits: 500 },
-  { key: 'topup_1000', price: '10€', credits: 1000 },
-  { key: 'topup_2000', price: '20€', credits: 2000 },
-]
 
 const subscriptionStatus = computed(() => authStore.currentUser?.subscription_status)
 const isSubscribed = computed(() => ['active', 'trialing', 'past_due'].includes(subscriptionStatus.value))

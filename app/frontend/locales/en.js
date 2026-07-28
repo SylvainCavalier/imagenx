@@ -18,6 +18,7 @@ export default {
     delete: 'Delete',
     rename: 'Rename',
     loading: 'Loading...',
+    close: 'Close',
     backToHome: 'Back to home',
     status: {
       pending: 'Pending',
@@ -256,6 +257,23 @@ export default {
       successMessage: 'Payment received, updating your balance...',
       cancelMessage: 'Checkout canceled.'
     }
+  },
+  creditsModal: {
+    title: 'Top up your credits',
+    balance: 'Current balance: {count} credit | Current balance: {count} credits',
+    remainingImages: 'enough for about {count} image | enough for about {count} images',
+    topupTitle: 'One-off top-up, no commitment',
+    creditsCount: '{count} credit | {count} credits',
+    imagesApprox: '≈ {count} image | ≈ {count} images',
+    costNote: 'Each generated image costs {cost} credits. Your credits never expire.',
+    subscription: {
+      title: 'Monthly plan — €5/month',
+      pitch: '{credits} credits added every month, about {images} images. Cancel anytime.',
+      badge: '+20% credits',
+      cta: 'Subscribe — €5/month',
+      manageCta: 'Manage my subscription'
+    },
+    accountLink: 'See my account details and credit history'
   },
   notFound: {
     message: 'Page not found'

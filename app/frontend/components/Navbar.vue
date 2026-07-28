@@ -57,8 +57,8 @@
               🇬🇧
             </button>
           </div>
-          <router-link
-            to="/app/account"
+          <button
+            @click="creditsModalOpen = true"
             :title="lowCredits ? t('nav.creditsLow') : t('nav.creditsTitle')"
             :class="lowCredits
               ? 'bg-amber-500/10 border-amber-500/40 text-amber-300 hover:bg-amber-500/20'
@@ -71,7 +71,7 @@
             <span class="tabular-nums">
               {{ t('nav.credits', { count: creditsBalance }) }}
             </span>
-          </router-link>
+          </button>
           <div ref="userMenuRef" class="relative">
             <button
               @click="menuOpen = !menuOpen"
@@ -124,6 +124,8 @@
         </div>
       </div>
     </div>
+
+    <CreditsModal :open="creditsModalOpen" @close="creditsModalOpen = false" />
   </nav>
 </template>
 
@@ -133,11 +135,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { setLocale } from '../plugins/i18n'
+import { CREDITS_PER_IMAGE } from '../constants/credits'
+import CreditsModal from './CreditsModal.vue'
 import logo from '../images/logo-text-imagenx-white.png'
-
-// Mirrors User::GENERATION_COST_PER_IMAGE: below one image's worth of credits,
-// the pill switches to a warning colour.
-const LOW_CREDITS_THRESHOLD = 8
 
 const route = useRoute()
 const router = useRouter()
@@ -145,8 +145,10 @@ const authStore = useAuthStore()
 const { t, locale } = useI18n()
 
 const creditsBalance = computed(() => authStore.currentUser?.credits_balance ?? 0)
-const lowCredits = computed(() => creditsBalance.value < LOW_CREDITS_THRESHOLD)
+// Below one image's worth of credits, the pill switches to a warning colour.
+const lowCredits = computed(() => creditsBalance.value < CREDITS_PER_IMAGE)
 
+const creditsModalOpen = ref(false)
 const menuOpen = ref(false)
 const userMenuRef = ref(null)
 
