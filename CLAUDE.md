@@ -32,7 +32,7 @@ npm install          # Node packages
 ### Database
 ```bash
 rails db:create db:migrate
-bundle exec annotate  # Update model annotations after migrations
+bundle exec annotaterb models  # Update model annotations after migrations (gem is annotaterb, there is no `annotate` binary)
 ```
 
 ### Testing
@@ -70,13 +70,17 @@ ImageNX is an AI image generation SaaS. Users write text prompts, generate image
 - **Auth**: email/password via Devise, session-based (`Api::AuthController` — login/register/logout/verify/confirm/resend_confirmation/forgot_password/reset_password). Email confirmation (`:confirmable`) is required before login/API access — gated explicitly in `Api::BaseController#authenticate_user!` since Devise routes are skipped and Warden's own hooks never run. Password reset (`:recoverable`) is fully wired. Sweego SMTP relay in production (`config/environments/production.rb`, `SMTP_*` env vars); `letter_opener` in dev.
   - **Sending domain**: the domain configured (and DNS-verified) on Sweego is **`mail.imagenx.fr`**, NOT the apex `imagenx.fr`. Every outgoing `From` must be on that subdomain (`MAILER_FROM=noreply@mail.imagenx.fr` on Heroku; same fallback in `ApplicationMailer` and `config/initializers/devise.rb`). Any other sender is rejected by the relay with `550 Unknow domain`.
   - Devise notifications go out via `deliver_later` (`User#send_devise_notification`) so a relay outage can't 500 the signup request after the user row is already committed; `MailDeliveryJob` retries transient SMTP failures.
-  - **Trial credits**: new users get `User::TRIAL_CREDITS` (20) on signup (`credits_balance` column, granted via `after_create`). No spend/debit logic yet — that lands with the future paid top-up system. See `.knowledge/marketing.md`.
+  - **Credits**: new users get `User::TRIAL_CREDITS` (80) on signup (`credits_balance` column, granted via `after_create`), i.e. 10 free images at `User::GENERATION_COST_PER_IMAGE` (8 credits each). Every movement is written to the `CreditTransaction` ledger (`trial_grant`, `generation_debit`, `generation_refund`, `topup_purchase`, `subscription_grant`, `admin_adjustment`). Debits go through `User.debit_credits` — a single conditional `UPDATE` that only succeeds if the balance covers the amount, so there is no read-then-write race; grants/refunds go through `User#add_credits!` (row lock + ledger entry). A batch is debited **up front** for all its items in `Api::GenerationBatchesController#create`; each item that fails is refunded individually by `GenerateImageJob#refund_credits!`. Paid top-ups and subscription grants arrive via Stripe webhooks (`WebhooksController`, idempotency through `StripeEvent`). See `.knowledge/marketing.md`.
   - **Programmatic access**: `/api/*` also accepts `Authorization: Bearer <token>` (`User#api_token`, `has_secure_token`), for scripts/agents that can't hold a session cookie/CSRF token. CSRF is skipped only when a Bearer token is present (`Api::BaseController#api_token_request?`); the cookie+CSRF flow used by the SPA is untouched. Manage the token with `bin/rails "api_token:show[email]"` / `"api_token:regenerate[email]"` (`lib/tasks/api_token.rake`). Used by the `imagenx-generate` Claude skill (`~/.claude/skills/imagenx-generate/`) to let other local projects trigger image generation.
 - **Landing page** (`Landing.vue`, public, at `/`): marketing page for logged-out visitors — hero, how-it-works, features, example gallery, credits teaser. The authenticated app lives under `/app` (`Dashboard.vue` at `/app`, plus `/app/history`, `/app/my-images`); a logged-in user hitting `/` is redirected to `/app` by the router guard.
 - **Image generation** (`Dashboard.vue`): user enters a main prompt (style/mood/format), an aspect ratio, optional style options, and one or more per-image sub-prompts. Submitting creates a `GenerationBatch` with one `GenerationItem` per sub-prompt.
-  - Each `GenerationItem` is processed by `GenerateImageJob` (GoodJob), staggered 12s apart to respect provider rate limits. The full prompt sent to the provider concatenates style options + main prompt + item prompt.
-  - `ImageGenerator` calls the Replicate API (`black-forest-labs/flux-1.1-pro` model): creates a prediction, retries on HTTP 429 (up to 5x), then polls (every 2s, up to 120s) until the prediction succeeds/fails.
+  - Each `GenerationItem` is processed by `GenerateImageJob` (GoodJob). Enqueueing goes through `BatchDispatcher`, which staggers jobs 12s apart to respect provider rate limits. The full prompt sent to the provider concatenates style options + main prompt + item prompt.
+  - `ImageGenerator` handles the Replicate HTTP calls (create a prediction, retry on HTTP 429 up to 5x, then poll every 2s up to 120s). The model itself is pluggable: `ImageModels::FluxPro` (`black-forest-labs/flux-1.1-pro`, the default) and `ImageModels::NanoBanana` (`google/nano-banana`) each own their endpoint and input shape. Both force `output_format: 'png'`.
   - Item status flow: `pending` → `processing` → `completed`/`failed`. The batch's own status is derived from its items (`GenerationBatch#update_status!`).
+  - **Coherence modes** (`generation_batches.coherence_mode`, `GenerationBatch::COHERENCE_MODES`, exposed as a select in the form): `none` (default, flux, only the shared main prompt ties the images together), `style` (the first image guides the artistic style, each scene stays its own) and `variation` (the first image *is* the scene, the others only alter it). Both coherent modes run the whole batch — reference image included — through nano-banana, and pass the reference's output URL as `image_input`.
+    - The two modes differ only by what `GenerateImageJob#compose_prompt` prepends (`COHERENCE_INSTRUCTIONS`). nano-banana is an *editing* model: left to itself it repaints the reference, so `style` has to forbid reusing the composition explicitly. In `variation` the follower prompt is deliberately reduced to the item prompt alone — repeating the main prompt reads as "generate that whole scene again" and fights the edit.
+    - A coherent batch is no longer a flat fan-out: only the reference item is enqueued at creation, and `GenerateImageJob` enqueues the followers itself once it succeeds. Settlement happens in `ensure`, so a dispatch error can never mark a generated-and-billed image as failed. If the reference fails, `fail_followers!` fails and refunds the remaining items, which were debited upfront — guarded by a conditional `UPDATE`, so a replay cannot refund twice.
+    - Cost is unchanged whatever the mode: N images, N calls, N × 8 credits. The mode is forced back to `none` for single-image batches, and is stored on `PromptPreset` too.
 - **Prompt presets**: users can save/reuse a named preset (prompt text + aspect ratio + style options) to prefill the generation form.
 - **Generation history** (`History.vue`): lists past batches with thumbnails and status; click through to see all items of a batch in a modal.
 - **Personal image library** (`MyImages.vue`): generated images can be saved into `ImageFolder`s. Saving triggers `DownloadImageJob`, which fetches the image from its temporary `source_url` and attaches it permanently via Active Storage (so it survives the provider's URL expiring). Folders support rename/delete; images support rename (prompt) and delete. Both generation items and saved images can be downloaded as PNG.
@@ -84,8 +88,10 @@ ImageNX is an AI image generation SaaS. Users write text prompts, generate image
 ### Data model
 
 `User` → `GenerationBatch` → `GenerationItem` (one prompt/image generation attempt each)
-`User` → `PromptPreset` (reusable prompt template)
+`User` → `PromptPreset` (reusable prompt template, incl. the coherence mode)
 `User` → `ImageFolder` → `SavedImage` (permanently kept image, Active Storage attachment)
+`User` → `CreditTransaction` (credits ledger, polymorphic `source` → batch or item)
+`User` → `SupportTicket`
 
 ## Architecture
 

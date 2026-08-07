@@ -35,7 +35,7 @@ export const useGenerationStore = defineStore('generation', {
       }
     },
 
-    async createBatch({ mainPrompt, aspectRatio, styleOptions, items }) {
+    async createBatch({ mainPrompt, aspectRatio, styleOptions, coherenceMode, items }) {
       this.loading = true
       this.error = null
       try {
@@ -43,6 +43,7 @@ export const useGenerationStore = defineStore('generation', {
           main_prompt: mainPrompt,
           aspect_ratio: aspectRatio,
           style_options: styleOptions || {},
+          coherence_mode: coherenceMode || 'none',
           items: items.map(i => ({ prompt: i.prompt }))
         })
         this.currentBatch = response.data

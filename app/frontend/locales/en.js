@@ -71,6 +71,17 @@ export default {
     moodMinimalist: 'Minimalist',
     moodVintage: 'Vintage',
     moodFuturistic: 'Futuristic',
+    coherence: 'Consistency',
+    coherenceNone: 'None',
+    coherenceStyle: 'Same style',
+    coherenceVariation: 'Same scene',
+    coherenceHint: {
+      none: 'Only the main prompt ties the images together',
+      style: 'The first image guides the style, every scene stays its own',
+      variation: 'The other images reuse the first one and only alter what you ask for'
+    },
+    coherenceNeedsTwo: 'Requires at least 2 images',
+    referenceBadge: 'Reference',
     savePresetTitle: 'Save Preset',
     presetNamePlaceholder: 'Preset name...',
     imagePlaceholder: 'Image {n} - Describe this specific image...',

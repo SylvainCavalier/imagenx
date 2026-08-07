@@ -24,6 +24,10 @@ module Api
         return render json: { error: 'At least one image prompt is required' }, status: :unprocessable_entity
       end
 
+      # A single image has nothing to be consistent with, and a coherence mode would
+      # silently switch it to another provider — persist what is actually done.
+      batch.coherence_mode = 'none' if items_data.size < 2
+
       total_cost = items_data.size * User::GENERATION_COST_PER_IMAGE
 
       ActiveRecord::Base.transaction do
@@ -49,9 +53,9 @@ module Api
       end
 
       batch.update!(status: 'processing')
-      batch.generation_items.each_with_index do |item, idx|
-        GenerateImageJob.set(wait: idx * 12.seconds).perform_later(item.id)
-      end
+      # reload so that `reference_item` reads from the database rather than from the
+      # association cache the `create!` calls above have populated.
+      BatchDispatcher.dispatch_initial(batch.reload)
 
       render json: batch_json(batch.reload), status: :created
     rescue InsufficientCredits
@@ -63,7 +67,7 @@ module Api
     private
 
     def batch_params
-      params.permit(:main_prompt, :aspect_ratio, style_options: {})
+      params.permit(:main_prompt, :aspect_ratio, :coherence_mode, style_options: {})
     end
 
     def batch_json(batch)
@@ -72,6 +76,7 @@ module Api
         main_prompt: batch.main_prompt,
         aspect_ratio: batch.aspect_ratio,
         style_options: batch.style_options,
+        coherence_mode: batch.coherence_mode,
         status: batch.status,
         created_at: batch.created_at,
         items: batch.generation_items.ordered.map { |item| item_json(item) }
@@ -85,6 +90,7 @@ module Api
         position: item.position,
         status: item.status,
         image_url: item.image_url,
+        reference_image_url: item.reference_image_url,
         error_message: item.error_message
       }
     end

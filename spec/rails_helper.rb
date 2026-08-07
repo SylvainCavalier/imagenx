@@ -1,6 +1,9 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
+# ImageGenerator#initialize does ENV.fetch('REPLICATE_API_KEY') and is instantiated even
+# when #generate is stubbed. Locally dotenv provides it; on CI there is no .env file.
+ENV['REPLICATE_API_KEY'] ||= 'test-replicate-key'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?

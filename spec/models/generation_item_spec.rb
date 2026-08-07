@@ -7,6 +7,7 @@
 #  image_url           :string
 #  position            :integer
 #  prompt              :text
+#  reference_image_url :string
 #  status              :string           default("pending"), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null

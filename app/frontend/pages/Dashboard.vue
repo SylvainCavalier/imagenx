@@ -112,6 +112,17 @@
             <option value="Futuristic">{{ t('dashboard.moodFuturistic') }}</option>
           </select>
         </div>
+        <div class="w-full flex items-center gap-2">
+          <label class="text-sm text-gray-400">{{ t('dashboard.coherence') }}</label>
+          <select v-model="coherenceMode" class="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="none">{{ t('dashboard.coherenceNone') }}</option>
+            <option value="style">{{ t('dashboard.coherenceStyle') }}</option>
+            <option value="variation">{{ t('dashboard.coherenceVariation') }}</option>
+          </select>
+          <span class="text-xs text-gray-500">
+            {{ coherenceMode !== 'none' && validCount < 2 ? t('dashboard.coherenceNeedsTwo') : t(`dashboard.coherenceHint.${coherenceMode}`) }}
+          </span>
+        </div>
       </div>
     </div>
 
@@ -219,9 +230,18 @@
         <div
           v-for="item in generationStore.currentBatch.items"
           :key="item.id"
-          class="bg-gray-900 rounded-xl border overflow-hidden transition-colors"
+          class="bg-gray-900 rounded-xl border overflow-hidden transition-colors relative"
           :class="isSelected(item.id) ? 'border-emerald-500' : 'border-gray-800'"
         >
+          <!-- Reference image of a coherent batch: kept visible in every status, the
+               other items only start once this one has completed -->
+          <span
+            v-if="generationStore.currentBatch.coherence_mode !== 'none' && item.position === 0"
+            class="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-indigo-600/90 text-white text-[10px] font-medium"
+          >
+            {{ t('dashboard.referenceBadge') }}
+          </span>
+
           <!-- Loading -->
           <div v-if="item.status === 'pending' || item.status === 'processing'" class="aspect-square flex items-center justify-center bg-gray-800">
             <div class="text-center">
@@ -331,6 +351,9 @@ const imageType = ref('')
 const realism = ref('')
 const lighting = ref('')
 const mood = ref('')
+// Kept out of styleOptions on purpose: style option values are concatenated into the
+// prompt server-side, this one drives the generation model instead.
+const coherenceMode = ref('none')
 const subPrompts = ref([{ prompt: '' }])
 const selectedIds = ref(new Set())
 
@@ -408,6 +431,7 @@ const generateAll = async () => {
     mainPrompt: mainPrompt.value,
     aspectRatio: aspectRatio.value,
     styleOptions: styleOptions.value,
+    coherenceMode: coherenceMode.value,
     items: validItems
   })
 
@@ -476,6 +500,7 @@ const loadPreset = () => {
     realism.value = opts.realism || ''
     lighting.value = opts.lighting || ''
     mood.value = opts.mood || ''
+    coherenceMode.value = preset.coherence_mode || 'none'
   }
 }
 
@@ -485,7 +510,8 @@ const savePreset = async () => {
     name: presetName.value,
     promptText: mainPrompt.value,
     aspectRatio: aspectRatio.value,
-    styleOptions: styleOptions.value
+    styleOptions: styleOptions.value,
+    coherenceMode: coherenceMode.value
   })
   presetName.value = ''
   showSavePreset.value = false

@@ -32,7 +32,7 @@ module Api
     private
 
     def preset_params
-      params.permit(:name, :prompt_text, :aspect_ratio, style_options: {})
+      params.permit(:name, :prompt_text, :aspect_ratio, :coherence_mode, style_options: {})
     end
 
     def preset_json(preset)
@@ -41,7 +41,8 @@ module Api
         name: preset.name,
         prompt_text: preset.prompt_text,
         aspect_ratio: preset.aspect_ratio,
-        style_options: preset.style_options
+        style_options: preset.style_options,
+        coherence_mode: preset.coherence_mode
       }
     end
   end

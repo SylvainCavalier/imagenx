@@ -3,19 +3,25 @@ require 'json'
 require 'openssl'
 
 class ImageGenerator
-  REPLICATE_API_URL = "https://api.replicate.com/v1/models/black-forest-labs/flux-1.1-pro/predictions"
   MAX_RETRIES = 5
+  MODELS = { flux: ImageModels::FluxPro, nano_banana: ImageModels::NanoBanana }.freeze
 
   class GenerationError < StandardError; end
   class RateLimitError < GenerationError; end
 
-  def initialize
+  def initialize(model: :flux)
     @api_token = ENV.fetch('REPLICATE_API_KEY')
+    klass = MODELS[model.to_sym] or raise ArgumentError, "Unknown image model: #{model}"
+    @model = klass.new
   end
 
-  def generate(prompt:, aspect_ratio: '1:1')
-    response = create_prediction_with_retry(prompt, aspect_ratio)
-    poll_for_result(response)
+  def generate(prompt:, aspect_ratio: '1:1', reference_urls: [])
+    input = @model.input(
+      prompt: prompt,
+      aspect_ratio: aspect_ratio,
+      reference_urls: Array(reference_urls).compact_blank
+    )
+    poll_for_result(create_prediction_with_retry(input))
   end
 
   private
@@ -31,20 +37,14 @@ class ImageGenerator
     http
   end
 
-  def create_prediction_with_retry(prompt, aspect_ratio)
+  def create_prediction_with_retry(input)
     retries = 0
     loop do
-      uri = URI(REPLICATE_API_URL)
+      uri = URI(@model.endpoint)
       request = Net::HTTP::Post.new(uri)
       request['Authorization'] = "Token #{@api_token}"
       request['Content-Type'] = 'application/json'
-      request.body = {
-        input: {
-          prompt: prompt,
-          aspect_ratio: aspect_ratio,
-          output_format: 'png'
-        }
-      }.to_json
+      request.body = { input: input }.to_json
 
       response = http_client(uri).request(request)
 

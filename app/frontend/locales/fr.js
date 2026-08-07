@@ -71,6 +71,17 @@ export default {
     moodMinimalist: 'Minimaliste',
     moodVintage: 'Vintage',
     moodFuturistic: 'Futuriste',
+    coherence: 'Cohérence',
+    coherenceNone: 'Aucune',
+    coherenceStyle: 'Même style',
+    coherenceVariation: 'Même scène',
+    coherenceHint: {
+      none: 'Seul le prompt principal relie les images entre elles',
+      style: 'La 1re image sert de modèle de style, chaque scène reste différente',
+      variation: 'Les images suivantes reprennent la 1re et n\'en changent que le détail demandé'
+    },
+    coherenceNeedsTwo: 'À partir de 2 images',
+    referenceBadge: 'Référence',
     savePresetTitle: 'Enregistrer le préréglage',
     presetNamePlaceholder: 'Nom du préréglage...',
     imagePlaceholder: 'Image {n} - Décrivez cette image en particulier...',
