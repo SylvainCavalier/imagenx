@@ -88,26 +88,24 @@
       <div class="space-y-10">
         <div>
           <p class="text-sm font-medium text-indigo-400 mb-3">{{ t('landing.gallery.setALabel') }}</p>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <img
-              v-for="img in setAImages"
-              :key="img"
-              :src="img"
-              alt=""
-              class="rounded-lg border border-gray-800 aspect-video object-cover"
-            />
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div v-for="(img, idx) in setAImages" :key="img" class="relative">
+              <img :src="img" alt="" class="w-full rounded-lg border border-gray-800 aspect-video object-cover" />
+              <span v-if="idx === 0" class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-indigo-600/90 text-white text-[10px] font-medium">
+                {{ t('landing.gallery.referenceBadge') }}
+              </span>
+            </div>
           </div>
         </div>
         <div>
           <p class="text-sm font-medium text-indigo-400 mb-3">{{ t('landing.gallery.setBLabel') }}</p>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <img
-              v-for="img in setBImages"
-              :key="img"
-              :src="img"
-              alt=""
-              class="rounded-lg border border-gray-800 aspect-square object-cover"
-            />
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div v-for="(img, idx) in setBImages" :key="img" class="relative">
+              <img :src="img" alt="" class="w-full rounded-lg border border-gray-800 aspect-square object-cover" />
+              <span v-if="idx === 0" class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-indigo-600/90 text-white text-[10px] font-medium">
+                {{ t('landing.gallery.referenceBadge') }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -142,8 +140,11 @@ import Footer from '../components/Footer.vue'
 
 const { t } = useI18n()
 
-const setAModules = import.meta.glob('../images/gallery/set-a/*.png', { eager: true, import: 'default' })
-const setBModules = import.meta.glob('../images/gallery/set-b/*.png', { eager: true, import: 'default' })
+// Each set is one real batch generated with the "same style" consistency mode: the first
+// image is the reference, the next two are its stylistic siblings. Files are numbered so
+// that the glob keeps that order.
+const setAModules = import.meta.glob('../images/gallery/set-a/*.jpg', { eager: true, import: 'default' })
+const setBModules = import.meta.glob('../images/gallery/set-b/*.jpg', { eager: true, import: 'default' })
 
 const setAImages = Object.values(setAModules)
 const setBImages = Object.values(setBModules)

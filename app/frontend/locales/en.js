@@ -197,9 +197,10 @@ export default {
     },
     gallery: {
       title: 'One main prompt, several images',
-      subtitle: 'Two example batches generated with ImageNX: one shared style, different subjects.',
+      subtitle: 'Two batches generated in one go with the "Same style" mode: the first image is the visual reference, the next ones share its world without copying its scene.',
       setALabel: 'Cinematic photography',
-      setBLabel: 'Vintage poster'
+      setBLabel: 'Vintage poster',
+      referenceBadge: 'Reference'
     },
     pricing: {
       title: 'Pay as you go',

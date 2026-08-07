@@ -197,9 +197,10 @@ export default {
     },
     gallery: {
       title: 'Un prompt principal, plusieurs images',
-      subtitle: 'Deux exemples de lots générés avec ImageNX : un style partagé, des sujets différents.',
+      subtitle: 'Deux lots générés d\'un seul coup avec le mode « Même style » : la première image sert de référence visuelle, les suivantes en reprennent l\'univers sans en copier la scène.',
       setALabel: 'Photographie cinématographique',
-      setBLabel: 'Affiche vintage'
+      setBLabel: 'Affiche vintage',
+      referenceBadge: 'Référence'
     },
     pricing: {
       title: 'Payez à l\'usage',
