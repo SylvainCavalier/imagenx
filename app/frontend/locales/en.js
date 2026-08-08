@@ -167,7 +167,7 @@ export default {
     hero: {
       badge: 'Batch AI image generation',
       title: 'One main prompt. Several coherent images.',
-      subtitle: 'ImageNX generates several AI images at once from a shared main prompt plus a prompt of its own for each image. Fast, coherent, no prompt-engineering jargon required.',
+      subtitle: 'ImageNX generates several AI images at once from a shared main prompt plus a prompt of its own for each image. Fast, coherent, with dropdowns instead of jargon, and pay-as-you-go without a subscription.',
       ctaPrimary: 'Create a free account',
       ctaSecondary: 'Sign in',
       creditsNote: '80 free credits on signup, no credit card required.'

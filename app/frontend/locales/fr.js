@@ -167,7 +167,7 @@ export default {
     hero: {
       badge: 'Génération d\'images IA par lots',
       title: 'Un prompt principal. Plusieurs images cohérentes.',
-      subtitle: 'ImageNX génère plusieurs images IA à la fois à partir d\'un prompt principal partagé et d\'un prompt propre à chaque image. Rapide, cohérent, sans jargon technique.',
+      subtitle: 'ImageNX génère plusieurs images IA à la fois à partir d\'un prompt principal partagé et d\'un prompt propre à chaque image. Rapide, cohérent, avec des options à cocher plutôt que du jargon, et paiement à l\'usage sans abonnement.',
       ctaPrimary: 'Créer un compte gratuit',
       ctaSecondary: 'Se connecter',
       creditsNote: '80 crédits offerts à l\'inscription, sans carte bancaire.'
