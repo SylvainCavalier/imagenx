@@ -133,3 +133,7 @@ ImageNX is an AI image generation SaaS. Users write text prompts, generate image
 **Backend:** Rails 8.0, PostgreSQL, Devise, Pundit, GoodJob, Pagy 43, PaperTrail
 **Frontend:** Vue 3.5, Vite 5, Pinia, Vue Router, Axios, Tailwind CSS 3.4
 **Requires:** Ruby 3.3.5, Node 20.x
+
+## Life Dashboard
+
+Projet du life-dashboard : `imagenx` (`/historyupdate` envoie chaque session au journal de bord de ce projet).
