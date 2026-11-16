@@ -6,6 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Rails 8.0 monolith with Vue 3 SPA frontend. Single domain architecture where Vue handles all UI and Rails serves as API backend. Uses Vite for frontend build tooling.
 
+## Status: local-only, no longer in production
+
+Since 2026-11-12 ImageNX is **not deployed anywhere**. It never had users besides Sylvain, and was judged not differentiating enough to be marketed. It is kept as a **personal tool run locally** (and through the `imagenx-generate` skill).
+
+What was torn down: the Heroku app `imagenx` (and its `heroku` git remote), its Heroku Postgres database, and the OVH Object Storage bucket `imagenx` (prod Active Storage, `:ovh` service in `config/storage.yml`). The `imagenx.fr` domain no longer points to anything.
+
+Consequences:
+- Don't deploy, don't run `heroku` commands for this app, and don't assume a production database exists. Production-only setup still in the code (`config/environments/production.rb`, Sweego SMTP, OVH storage, Stripe webhooks) is dormant and would need new infra before any redeploy.
+- Locally: Disk storage, `letter_opener` for mails, local Postgres. The Replicate API key is still in use locally — keep it.
+
 ## Common Commands
 
 ### Development
@@ -68,7 +78,7 @@ ImageNX is an AI image generation SaaS. Users write text prompts, generate image
 ### Core features
 
 - **Auth**: email/password via Devise, session-based (`Api::AuthController` — login/register/logout/verify/confirm/resend_confirmation/forgot_password/reset_password). Email confirmation (`:confirmable`) is required before login/API access — gated explicitly in `Api::BaseController#authenticate_user!` since Devise routes are skipped and Warden's own hooks never run. Password reset (`:recoverable`) is fully wired. Sweego SMTP relay in production (`config/environments/production.rb`, `SMTP_*` env vars); `letter_opener` in dev.
-  - **Sending domain**: the domain configured (and DNS-verified) on Sweego is **`mail.imagenx.fr`**, NOT the apex `imagenx.fr`. Every outgoing `From` must be on that subdomain (`MAILER_FROM=noreply@mail.imagenx.fr` on Heroku; same fallback in `ApplicationMailer` and `config/initializers/devise.rb`). Any other sender is rejected by the relay with `550 Unknow domain`.
+  - **Sending domain**: the domain configured (and DNS-verified) on Sweego is **`mail.imagenx.fr`**, NOT the apex `imagenx.fr`. Every outgoing `From` must be on that subdomain (`MAILER_FROM=noreply@mail.imagenx.fr` was set on the former Heroku app; same fallback in `ApplicationMailer` and `config/initializers/devise.rb`). Any other sender is rejected by the relay with `550 Unknow domain`.
   - Devise notifications go out via `deliver_later` (`User#send_devise_notification`) so a relay outage can't 500 the signup request after the user row is already committed; `MailDeliveryJob` retries transient SMTP failures.
   - **Credits**: new users get `User::TRIAL_CREDITS` (80) on signup (`credits_balance` column, granted via `after_create`), i.e. 10 free images at `User::GENERATION_COST_PER_IMAGE` (8 credits each). Every movement is written to the `CreditTransaction` ledger (`trial_grant`, `generation_debit`, `generation_refund`, `topup_purchase`, `subscription_grant`, `admin_adjustment`). Debits go through `User.debit_credits` — a single conditional `UPDATE` that only succeeds if the balance covers the amount, so there is no read-then-write race; grants/refunds go through `User#add_credits!` (row lock + ledger entry). A batch is debited **up front** for all its items in `Api::GenerationBatchesController#create`; each item that fails is refunded individually by `GenerateImageJob#refund_credits!`. Paid top-ups and subscription grants arrive via Stripe webhooks (`WebhooksController`, idempotency through `StripeEvent`). See `.knowledge/marketing.md`.
   - **Programmatic access**: `/api/*` also accepts `Authorization: Bearer <token>` (`User#api_token`, `has_secure_token`), for scripts/agents that can't hold a session cookie/CSRF token. CSRF is skipped only when a Bearer token is present (`Api::BaseController#api_token_request?`); the cookie+CSRF flow used by the SPA is untouched. Manage the token with `bin/rails "api_token:show[email]"` / `"api_token:regenerate[email]"` (`lib/tasks/api_token.rake`). Used by the `imagenx-generate` Claude skill (`~/.claude/skills/imagenx-generate/`) to let other local projects trigger image generation.
